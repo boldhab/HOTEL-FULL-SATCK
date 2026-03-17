@@ -12,48 +12,76 @@ model User {
   name      String
   email     String   @unique
   password  String
-  role      Role     @default(USER)
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Room {
+  id          String    @id @default(uuid())
+  name        String
+  type        String    @default("Standard") // e.g., Suite, Deluxe, etc.
+  description String
+  price       Float
+  capacity    Int
+  images      String[]  // Local file paths
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  bookings    Booking[]
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  title       String
+  type        String   @default("Amenity") // e.g., Restaurant, Event, Amenity
+  description String
+  icon        String?  // Icon class or image path
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Gallery {
+  id          String   @id @default(uuid())
+  imageUrl    String
+  description String?
+  category    String   @default("General") // e.g., Exterior, Interior, Food
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String?
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   bookings  Booking[]
 }
 
-model Room {
-  id          String   @id @default(uuid())
-  name        String
-  description String
-  price       Float
-  capacity    Int
-  images      String[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  bookings    Booking[]
-}
-
 model Booking {
-  id        String   @id @default(uuid())
-  userId    String
-  roomId    String
-  startDate DateTime
-  endDate   DateTime
-  totalPrice Float
-  status    String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user      User     @relation(fields: [userId], references: [id])
-  room      Room     @relation(fields: [roomId], references: [id])
-}
-
-model Event {
   id          String   @id @default(uuid())
-  title       String
-  description String
-  date        DateTime
-  location    String
-  image       String?
+  customerId  String
+  roomId      String
+  checkIn     DateTime
+  checkOut    DateTime
+  totalPrice  Float
+  status      String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  customer    Customer @relation(fields: [customerId], references: [id])
+  room        Room     @relation(fields: [roomId], references: [id])
 }
 
 enum Role {
