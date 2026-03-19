@@ -1,8 +1,9 @@
 "use client";
 
+import type { ComponentProps } from "react";
 import { useState } from "react";
 
-type ImageWithFallbackProps = React.ImgHTMLAttributes<HTMLImageElement> & {
+type ImageWithFallbackProps = ComponentProps<"img"> & {
   fallbackSrc?: string;
 };
 
