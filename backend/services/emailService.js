@@ -1,6 +1,11 @@
-const nodemailer = require('nodemailer');
-
 const getTransporter = () => {
+  let nodemailer;
+  try {
+    nodemailer = require('nodemailer');
+  } catch (error) {
+    throw new Error('Email support is unavailable because nodemailer is not installed');
+  }
+
   const host = process.env.SMTP_HOST;
   const port = Number(process.env.SMTP_PORT || 587);
   const user = process.env.SMTP_USER;

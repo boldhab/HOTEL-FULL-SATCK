@@ -38,6 +38,8 @@ async function main() {
           description: 'A beautiful room with a view of the ocean.',
           price: 250,
           capacity: 2,
+          images: [],
+          imagePublicIds: [],
         },
         {
           name: 'Family Suite',
@@ -45,6 +47,8 @@ async function main() {
           description: 'Spacious suite for the whole family.',
           price: 450,
           capacity: 4,
+          images: [],
+          imagePublicIds: [],
         },
       ],
     });
