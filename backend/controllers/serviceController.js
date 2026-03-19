@@ -1,4 +1,5 @@
-const prisma = require('../config/prisma');
+const serviceService = require('../services/serviceService');
+const { logAdminAction } = require('../services/auditService');
 const asyncHandler = require('../utils/asyncHandler');
 
 /**
@@ -7,9 +8,7 @@ const asyncHandler = require('../utils/asyncHandler');
  * @access  Public
  */
 exports.getServices = asyncHandler(async (req, res) => {
-  const services = await prisma.service.findMany({
-    orderBy: { createdAt: 'desc' },
-  });
+  const services = await serviceService.listServices();
 
   res.status(200).json({
     success: true,
@@ -25,11 +24,49 @@ exports.getServices = asyncHandler(async (req, res) => {
 exports.createService = asyncHandler(async (req, res) => {
   const { title, type, description, icon } = req.body;
 
-  const service = await prisma.service.create({
-    data: { title, type, description, icon },
+  const service = await serviceService.createService({
+    title,
+    type,
+    description,
+    icon,
+  });
+
+  await logAdminAction({
+    adminId: req.user.id,
+    action: 'CREATE_SERVICE',
+    entity: 'Service',
+    entityId: service.id,
   });
 
   res.status(201).json({
+    success: true,
+    data: service,
+  });
+});
+
+/**
+ * @desc    Update service
+ * @route   PUT /api/services/:id
+ * @access  Private/Admin
+ */
+exports.updateService = asyncHandler(async (req, res) => {
+  const { title, type, description, icon } = req.body;
+
+  const service = await serviceService.updateService(req.params.id, {
+    title,
+    type,
+    description,
+    icon,
+  });
+
+  await logAdminAction({
+    adminId: req.user.id,
+    action: 'UPDATE_SERVICE',
+    entity: 'Service',
+    entityId: service.id,
+  });
+
+  res.status(200).json({
     success: true,
     data: service,
   });
@@ -41,8 +78,13 @@ exports.createService = asyncHandler(async (req, res) => {
  * @access  Private/Admin
  */
 exports.deleteService = asyncHandler(async (req, res) => {
-  await prisma.service.delete({
-    where: { id: req.params.id },
+  const service = await serviceService.deleteService(req.params.id);
+
+  await logAdminAction({
+    adminId: req.user.id,
+    action: 'DELETE_SERVICE',
+    entity: 'Service',
+    entityId: service.id,
   });
 
   res.status(200).json({

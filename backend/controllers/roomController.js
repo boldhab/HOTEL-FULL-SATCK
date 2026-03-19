@@ -1,7 +1,7 @@
-const prisma = require('../config/prisma');
+const roomService = require('../services/roomService');
+const { uploadBuffer, deleteByPublicId } = require('../services/cloudinaryService');
+const { logAdminAction } = require('../services/auditService');
 const asyncHandler = require('../utils/asyncHandler');
-const fs = require('fs');
-const path = require('path');
 
 /**
  * @desc    Get all rooms
@@ -9,9 +9,7 @@ const path = require('path');
  * @access  Public
  */
 exports.getRooms = asyncHandler(async (req, res) => {
-  const rooms = await prisma.room.findMany({
-    orderBy: { createdAt: 'desc' },
-  });
+  const rooms = await roomService.listRooms();
 
   res.status(200).json({
     success: true,
@@ -26,9 +24,7 @@ exports.getRooms = asyncHandler(async (req, res) => {
  * @access  Public
  */
 exports.getRoom = asyncHandler(async (req, res) => {
-  const room = await prisma.room.findUnique({
-    where: { id: req.params.id },
-  });
+  const room = await roomService.getRoomById(req.params.id);
 
   if (!room) {
     return res.status(404).json({
@@ -51,18 +47,35 @@ exports.getRoom = asyncHandler(async (req, res) => {
 exports.createRoom = asyncHandler(async (req, res) => {
   const { name, type, description, price, capacity } = req.body;
 
-  // Handle images if uploaded
-  const images = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
+  let images = [];
+  let imagePublicIds = [];
 
-  const room = await prisma.room.create({
-    data: {
-      name,
-      type,
-      description,
-      price: parseFloat(price),
-      capacity: parseInt(capacity),
-      images,
-    },
+  if (req.files && req.files.length > 0) {
+    const uploads = await Promise.all(
+      req.files.map((file) =>
+        uploadBuffer(file.buffer, { folder: 'hotel/rooms' })
+      )
+    );
+    images = uploads.map((u) => u.secure_url);
+    imagePublicIds = uploads.map((u) => u.public_id);
+  }
+
+  const room = await roomService.createRoom({
+    name,
+    type,
+    description,
+    price: parseFloat(price),
+    capacity: parseInt(capacity),
+    images,
+    imagePublicIds,
+  });
+
+  await logAdminAction({
+    adminId: req.user.id,
+    action: 'CREATE_ROOM',
+    entity: 'Room',
+    entityId: room.id,
+    metadata: { name },
   });
 
   res.status(201).json({
@@ -77,9 +90,7 @@ exports.createRoom = asyncHandler(async (req, res) => {
  * @access  Private/Admin
  */
 exports.updateRoom = asyncHandler(async (req, res) => {
-  let room = await prisma.room.findUnique({
-    where: { id: req.params.id },
-  });
+  let room = await roomService.getRoomById(req.params.id);
 
   if (!room) {
     return res.status(404).json({
@@ -92,20 +103,37 @@ exports.updateRoom = asyncHandler(async (req, res) => {
   
   // Handle new images if uploaded, otherwise keep old ones
   let images = room.images;
+  let imagePublicIds = room.imagePublicIds || [];
+
   if (req.files && req.files.length > 0) {
-    images = req.files.map(file => `/uploads/${file.filename}`);
+    if (imagePublicIds.length > 0) {
+      await Promise.all(imagePublicIds.map((id) => deleteByPublicId(id)));
+    }
+
+    const uploads = await Promise.all(
+      req.files.map((file) =>
+        uploadBuffer(file.buffer, { folder: 'hotel/rooms' })
+      )
+    );
+    images = uploads.map((u) => u.secure_url);
+    imagePublicIds = uploads.map((u) => u.public_id);
   }
 
-  room = await prisma.room.update({
-    where: { id: req.params.id },
-    data: {
-      name,
-      type,
-      description,
-      price: price ? parseFloat(price) : undefined,
-      capacity: capacity ? parseInt(capacity) : undefined,
-      images,
-    },
+  room = await roomService.updateRoom(req.params.id, {
+    name,
+    type,
+    description,
+    price: price ? parseFloat(price) : undefined,
+    capacity: capacity ? parseInt(capacity) : undefined,
+    images,
+    imagePublicIds,
+  });
+
+  await logAdminAction({
+    adminId: req.user.id,
+    action: 'UPDATE_ROOM',
+    entity: 'Room',
+    entityId: room.id,
   });
 
   res.status(200).json({
@@ -120,9 +148,7 @@ exports.updateRoom = asyncHandler(async (req, res) => {
  * @access  Private/Admin
  */
 exports.deleteRoom = asyncHandler(async (req, res) => {
-  const room = await prisma.room.findUnique({
-    where: { id: req.params.id },
-  });
+  const room = await roomService.getRoomById(req.params.id);
 
   if (!room) {
     return res.status(404).json({
@@ -131,18 +157,17 @@ exports.deleteRoom = asyncHandler(async (req, res) => {
     });
   }
 
-  // Delete images from filesystem
-  if (room.images && room.images.length > 0) {
-    room.images.forEach(imagePath => {
-      const fullPath = path.join(__dirname, '..', imagePath);
-      if (fs.existsSync(fullPath)) {
-        fs.unlinkSync(fullPath);
-      }
-    });
+  if (room.imagePublicIds && room.imagePublicIds.length > 0) {
+    await Promise.all(room.imagePublicIds.map((id) => deleteByPublicId(id)));
   }
 
-  await prisma.room.delete({
-    where: { id: req.params.id },
+  await roomService.deleteRoom(req.params.id);
+
+  await logAdminAction({
+    adminId: req.user.id,
+    action: 'DELETE_ROOM',
+    entity: 'Room',
+    entityId: room.id,
   });
 
   res.status(200).json({

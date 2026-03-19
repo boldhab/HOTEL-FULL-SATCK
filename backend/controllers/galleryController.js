@@ -1,7 +1,7 @@
-const prisma = require('../config/prisma');
+const galleryService = require('../services/galleryService');
+const { uploadBuffer, deleteByPublicId } = require('../services/cloudinaryService');
+const { logAdminAction } = require('../services/auditService');
 const asyncHandler = require('../utils/asyncHandler');
-const fs = require('fs');
-const path = require('path');
 
 /**
  * @desc    Get gallery items
@@ -9,9 +9,7 @@ const path = require('path');
  * @access  Public
  */
 exports.getGallery = asyncHandler(async (req, res) => {
-  const items = await prisma.gallery.findMany({
-    orderBy: { createdAt: 'desc' },
-  });
+  const items = await galleryService.listGallery();
 
   res.status(200).json({
     success: true,
@@ -34,12 +32,20 @@ exports.uploadToGallery = asyncHandler(async (req, res) => {
     });
   }
 
-  const item = await prisma.gallery.create({
-    data: {
-      imageUrl: `/uploads/${req.file.filename}`,
-      description,
-      category,
-    },
+  const uploaded = await uploadBuffer(req.file.buffer, { folder: 'hotel/gallery' });
+
+  const item = await galleryService.createGalleryItem({
+    imageUrl: uploaded.secure_url,
+    publicId: uploaded.public_id,
+    description,
+    category,
+  });
+
+  await logAdminAction({
+    adminId: req.user.id,
+    action: 'CREATE_GALLERY_ITEM',
+    entity: 'Gallery',
+    entityId: item.id,
   });
 
   res.status(201).json({
@@ -54,9 +60,7 @@ exports.uploadToGallery = asyncHandler(async (req, res) => {
  * @access  Private/Admin
  */
 exports.deleteGalleryItem = asyncHandler(async (req, res) => {
-  const item = await prisma.gallery.findUnique({
-    where: { id: req.params.id },
-  });
+  const item = await galleryService.getGalleryItem(req.params.id);
 
   if (!item) {
     return res.status(404).json({
@@ -65,14 +69,17 @@ exports.deleteGalleryItem = asyncHandler(async (req, res) => {
     });
   }
 
-  // Delete file from filesystem
-  const fullPath = path.join(__dirname, '..', item.imageUrl);
-  if (fs.existsSync(fullPath)) {
-    fs.unlinkSync(fullPath);
+  if (item.publicId) {
+    await deleteByPublicId(item.publicId);
   }
 
-  await prisma.gallery.delete({
-    where: { id: req.params.id },
+  await galleryService.deleteGalleryItem(req.params.id);
+
+  await logAdminAction({
+    adminId: req.user.id,
+    action: 'DELETE_GALLERY_ITEM',
+    entity: 'Gallery',
+    entityId: item.id,
   });
 
   res.status(200).json({

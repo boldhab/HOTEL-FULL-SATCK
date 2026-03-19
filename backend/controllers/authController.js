@@ -40,7 +40,15 @@ exports.login = asyncHandler(async (req, res) => {
     });
   }
 
-  // 4. Generate token
+  // 4. Allow only admin users
+  if (user.role !== 'ADMIN') {
+    return res.status(403).json({
+      success: false,
+      message: 'Admin access only',
+    });
+  }
+
+  // 5. Generate token
   const token = jwt.sign(
     { id: user.id, role: user.role },
     process.env.JWT_SECRET,

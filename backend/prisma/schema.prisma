@@ -15,6 +15,7 @@ model User {
   role      Role     @default(ADMIN)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  auditLogs AuditLog[]
 }
 
 model Room {
@@ -24,7 +25,8 @@ model Room {
   description String
   price       Float
   capacity    Int
-  images      String[]  // Local file paths
+  images      String[]  // Cloudinary URLs
+  imagePublicIds String[] // Cloudinary public IDs
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   bookings    Booking[]
@@ -43,6 +45,7 @@ model Service {
 model Gallery {
   id          String   @id @default(uuid())
   imageUrl    String
+  publicId    String?
   description String?
   category    String   @default("General") // e.g., Exterior, Interior, Food
   createdAt   DateTime @default(now())
@@ -55,7 +58,41 @@ model Message {
   email     String
   subject   String?
   content   String
+  isRead    Boolean  @default(false)
+  adminReply String?
+  repliedAt DateTime?
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  adminId   String
+  action    String   // e.g., CREATE_ROOM, UPDATE_SETTINGS
+  entity    String   // e.g., Room, Service, Gallery
+  entityId  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  admin     User     @relation(fields: [adminId], references: [id])
+}
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Page {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  title     String
+  content   String
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Customer {

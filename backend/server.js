@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const path = require('path');
 const dotenv = require('dotenv');
 
 // Load environment variables
@@ -16,6 +15,10 @@ const roomRoutes = require('./routes/roomRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const galleryRoutes = require('./routes/galleryRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
+const pageRoutes = require('./routes/pageRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
+const auditRoutes = require('./routes/auditRoutes');
 
 const app = express();
 
@@ -28,15 +31,16 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static folder for uploads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/rooms', roomRoutes);
-app.use('/api/services', serviceRoutes);
-app.use('/api/gallery', galleryRoutes);
-app.use('/api/messages', messageRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/rooms', roomRoutes);
+app.use('/api/v1/services', serviceRoutes);
+app.use('/api/v1/gallery', galleryRoutes);
+app.use('/api/v1/messages', messageRoutes);
+app.use('/api/v1/settings', settingsRoutes);
+app.use('/api/v1/pages', pageRoutes);
+app.use('/api/v1/analytics', analyticsRoutes);
+app.use('/api/v1/audit-logs', auditRoutes);
 
 // Root route
 app.get('/', (req, res) => {
