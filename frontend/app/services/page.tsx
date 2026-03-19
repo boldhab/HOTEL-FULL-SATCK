@@ -1,4 +1,4 @@
-import { Services } from "../pages/Services";
+import { Services } from "@/features/pages/Services";
 
 export default function Page() {
   return <Services />;
