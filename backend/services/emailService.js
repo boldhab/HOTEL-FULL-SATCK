@@ -1,5 +1,6 @@
 const getTransporter = () => {
   let nodemailer;
+
   try {
     nodemailer = require('nodemailer');
   } catch (error) {
@@ -7,10 +8,10 @@ const getTransporter = () => {
   }
 
   const host = process.env.SMTP_HOST;
-  const port = Number(process.env.SMTP_PORT || 587);
+  const port = Number(process.env.SMTP_PORT || 465);
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
-  const secure = String(process.env.SMTP_SECURE || 'false') === 'true';
+  const secure = String(process.env.SMTP_SECURE || 'true') === 'true';
 
   if (!host || !user || !pass) {
     throw new Error('SMTP configuration is missing');
