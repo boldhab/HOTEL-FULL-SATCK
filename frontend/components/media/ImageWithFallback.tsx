@@ -1,7 +1,7 @@
 "use client";
 
 import type { ComponentProps } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type ImageWithFallbackProps = ComponentProps<"img"> & {
   fallbackSrc?: string;
@@ -19,13 +19,19 @@ export function ImageWithFallback({
 }: ImageWithFallbackProps) {
   const [imageSrc, setImageSrc] = useState(src);
 
+  useEffect(() => {
+    setImageSrc(src);
+  }, [src]);
+
   return (
     <img
       {...props}
       alt={alt}
       src={imageSrc}
       onError={(event) => {
-        setImageSrc(fallbackSrc);
+        if (imageSrc !== fallbackSrc) {
+          setImageSrc(fallbackSrc);
+        }
         onError?.(event);
       }}
     />
