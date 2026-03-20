@@ -10,16 +10,13 @@ import { ImageWithFallback } from "@/components/media/ImageWithFallback";
 
 const heroImage = "https://images.unsplash.com/photo-1744782996368-dc5b7e697f4c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMGxvYmJ5JTIwaW50ZXJpb3J8ZW58MXx8fHwxNzczODM3MTM1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
 const aboutImage = "https://images.unsplash.com/photo-1769766407883-1645a93eed40?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMGV4dGVyaW9yJTIwYnVpbGRpbmclMjBuaWdodHxlbnwxfHx8fDE3NzM5MjUyOTh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
-const gallery1 = "https://images.unsplash.com/photo-1768697358705-c1b60333da35?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMHJlc3RhdXJhbnQlMjBkaW5pbmclMjBlbGVnYW50fGVufDF8fHx8MTc3MzgxMjk3Nnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
-const gallery2 = "https://images.unsplash.com/photo-1731080647266-85cf1bc27162?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMHN3aW1taW5nJTIwcG9vbCUyMGx1eHVyeXxlbnwxfHx8fDE3NzM5MjUyOTd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
-const gallery3 = "https://images.unsplash.com/photo-1584536318461-2ee56bc042f1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMHNwYSUyMHdlbGxuZXNzJTIwY2VudGVyfGVufDF8fHx8MTc3MzkyNTI5N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
-const gallery4 = "https://images.unsplash.com/photo-1759038085950-1234ca8f5fed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMHJlY2VwdGlvbiUyMGRlc2slMjBjb25jaWVyZ2V8ZW58MXx8fHwxNzczOTI1Mjk5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
 
-const featuredRooms = [
+// Fallbacks for layout structure 
+const fallbackRooms = [
   {
     id: "1",
     name: "Deluxe Room",
-    image: "https://images.unsplash.com/photo-1592901147824-212145b050cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMGRlbHV4ZSUyMHJvb20lMjBiZWR8ZW58MXx8fHwxNzczOTA3NTYzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    image: "https://images.unsplash.com/photo-1592901147824-212145b050cf?auto=format&fit=crop&q=80&w=1080",
     description: "Spacious room with modern amenities and stunning city views.",
     features: ["Free WiFi", "Smart TV", "Coffee Maker", "City View"],
     price: 150,
@@ -28,7 +25,7 @@ const featuredRooms = [
   {
     id: "2",
     name: "Executive Suite",
-    image: "https://images.unsplash.com/photo-1758448511255-ac2a24a135d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMGV4ZWN1dGl2ZSUyMHN1aXRlJTIwbGl2aW5nfGVufDF8fHx8MTc3MzkyNTI5Nnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    image: "https://images.unsplash.com/photo-1758448511255-ac2a24a135d7?auto=format&fit=crop&q=80&w=1080",
     description: "Luxurious suite with separate living area and premium amenities.",
     features: ["Free WiFi", "Work Desk", "Mini Bar", "City View"],
     price: 250,
@@ -37,7 +34,7 @@ const featuredRooms = [
   {
     id: "3",
     name: "Presidential Suite",
-    image: "https://images.unsplash.com/photo-1664780476492-fbb9fd277ce8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMHByZXNpZGVudGlhbCUyMHN1aXRlJTIwbHV4dXJ5fGVufDF8fHx8MTc3MzkyNTI5Nnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    image: "https://images.unsplash.com/photo-1664780476492-fbb9fd277ce8?auto=format&fit=crop&q=80&w=1080",
     description: "The ultimate luxury experience with panoramic views and exclusive services.",
     features: ["Free WiFi", "Smart TV", "Mini Bar", "City View"],
     price: 500,
@@ -45,40 +42,53 @@ const featuredRooms = [
   },
 ];
 
-const services = [
-  {
-    icon: Wifi,
-    title: "Free WiFi",
-    description: "High-speed internet access throughout the hotel",
-  },
-  {
-    icon: Utensils,
-    title: "Fine Dining",
-    description: "World-class restaurant serving international cuisine",
-  },
-  {
-    icon: Dumbbell,
-    title: "Fitness Center",
-    description: "State-of-the-art gym equipment and personal trainers",
-  },
-  {
-    icon: Sparkles,
-    title: "Spa & Wellness",
-    description: "Rejuvenating spa treatments and wellness programs",
-  },
-  {
-    icon: Car,
-    title: "Valet Parking",
-    description: "Complimentary valet parking for all guests",
-  },
-  {
-    icon: Clock,
-    title: "24/7 Service",
-    description: "Round-the-clock concierge and room service",
-  },
+const fallbackServices = [
+  { icon: Wifi, title: "Free WiFi", description: "High-speed internet access throughout the hotel" },
+  { icon: Utensils, title: "Fine Dining", description: "World-class restaurant serving international cuisine" },
+  { icon: Dumbbell, title: "Fitness Center", description: "State-of-the-art gym equipment and personal trainers" },
+  { icon: Sparkles, title: "Spa & Wellness", description: "Rejuvenating spa treatments and wellness programs" },
+  { icon: Car, title: "Valet Parking", description: "Complimentary valet parking for all guests" },
+  { icon: Clock, title: "24/7 Service", description: "Round-the-clock concierge and room service" },
 ];
 
-export function Home() {
+const defaultGallery = [
+  "https://images.unsplash.com/photo-1768697358705-c1b60333da35?auto=format&fit=crop&q=80&w=1080",
+  "https://images.unsplash.com/photo-1731080647266-85cf1bc27162?auto=format&fit=crop&q=80&w=1080",
+  "https://images.unsplash.com/photo-1584536318461-2ee56bc042f1?auto=format&fit=crop&q=80&w=1080",
+  "https://images.unsplash.com/photo-1759038085950-1234ca8f5fed?auto=format&fit=crop&q=80&w=1080",
+];
+
+export function Home({ initialData = { rooms: [], gallery: [], services: [] } }: { initialData?: any }) {
+
+  // Map backend rooms (slice to first 3)
+  const displayRooms = initialData.rooms?.length > 0 
+    ? initialData.rooms.slice(0, 3).map((r: any) => ({
+        id: r.id,
+        name: r.name,
+        image: r.images?.[0] || fallbackRooms[0].image,
+        description: r.description,
+        features: ["Free WiFi", "Smart TV", "City View"],
+        price: r.price,
+        maxGuests: r.capacity
+      }))
+    : fallbackRooms;
+
+  // Map backend gallery (slice to first 4 for grid preview)
+  const displayGallery = initialData.gallery?.length >= 4 
+    ? initialData.gallery.slice(0, 4).map((g: any) => g.imageUrl)
+    : defaultGallery;
+
+  // Map backend services (slice to first 6)
+  const iconMap: Record<string, any> = { 'Wifi': Wifi, 'Utensils': Utensils, 'Dumbbell': Dumbbell, 'Sparkles': Sparkles, 'Car': Car, 'Clock': Clock };
+  
+  const displayServices = initialData.services?.length > 0
+    ? initialData.services.slice(0, 6).map((s: any) => ({
+        icon: s.icon && iconMap[s.icon] ? iconMap[s.icon] : Sparkles,
+        title: s.title,
+        description: s.description
+      }))
+    : fallbackServices;
+
   return (
     <div className="pt-20">
       {/* Hero Section */}
@@ -212,7 +222,7 @@ export function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            {featuredRooms.map((room, index) => (
+            {displayRooms.map((room: any, index: number) => (
               <RoomCard key={room.id} {...room} index={index} />
             ))}
           </div>
@@ -251,7 +261,7 @@ export function Home() {
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service, index) => (
+            {displayServices.map((service: any, index: number) => (
               <ServiceCard key={service.title} {...service} index={index} />
             ))}
           </div>
@@ -277,7 +287,7 @@ export function Home() {
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {[gallery1, gallery2, gallery3, gallery4].map((img, index) => (
+            {displayGallery.map((img: string, index: number) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, scale: 0.9 }}

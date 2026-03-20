@@ -3,13 +3,31 @@ const { sendMessageReply } = require('../services/emailService');
 const { logAdminAction } = require('../services/auditService');
 const asyncHandler = require('../utils/asyncHandler');
 
+const escapeHtml = (value = '') =>
+  String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+const formatSubject = (subject) => {
+  if (!subject) return 'General Inquiry';
+
+  return String(subject)
+    .split(/[_-\s]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+};
+
 /**
  * @desc    Submit contact message
  * @route   POST /api/messages
  * @access  Public
  */
 exports.submitMessage = asyncHandler(async (req, res) => {
-  const { name, email, subject, content } = req.body;
+  const { name, email, subject, content, phone } = req.body;
 
   if (!name || !email || !content) {
     return res.status(400).json({
@@ -24,6 +42,61 @@ exports.submitMessage = asyncHandler(async (req, res) => {
     subject,
     content,
   });
+
+  console.log(
+    `[contact] Message saved: id=${message.id} email=${email} subject=${subject || 'General Inquiry'}`
+  );
+
+  // Notify admin via email
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL || process.env.SMTP_USER;
+    if (adminEmail) {
+      const readableSubject = formatSubject(subject);
+      const safeName = escapeHtml(name);
+      const safeEmail = escapeHtml(email);
+      const safePhone = phone ? escapeHtml(phone) : 'Not provided';
+      const safeContent = escapeHtml(content).replace(/\n/g, '<br/>');
+
+      const info = await sendMessageReply({
+        to: adminEmail,
+        subject: `New Contact Form Submission: ${readableSubject}`,
+        text: [
+          'You have received a new message from your website contact form.',
+          '',
+          `Name: ${name}`,
+          `Email: ${email}`,
+          `Phone: ${phone || 'Not provided'}`,
+          `Subject: ${readableSubject}`,
+          '',
+          'Message:',
+          content,
+        ].join('\n'),
+        html: `<h3>New Contact Form Submission</h3>
+               <p><strong>Name:</strong> ${safeName}</p>
+               <p><strong>Email:</strong> ${safeEmail}</p>
+               <p><strong>Phone:</strong> ${safePhone}</p>
+               <p><strong>Subject:</strong> ${escapeHtml(readableSubject)}</p>
+               <br/>
+               <p><strong>Message:</strong></p>
+               <p>${safeContent}</p>`,
+        replyTo: email,
+      });
+
+      console.log(
+        `[contact] Admin email sent: messageId=${message.id} to=${adminEmail} smtpId=${info.messageId || 'n/a'}`
+      );
+    } else {
+      console.warn(
+        `[contact] Email skipped: no ADMIN_EMAIL or SMTP_USER configured for messageId=${message.id}`
+      );
+    }
+  } catch (error) {
+    // Log error but do not fail the request if the email fails
+    console.error(
+      `[contact] Failed to send admin notification email for messageId=${message.id}:`,
+      error.message || error
+    );
+  }
 
   res.status(201).json({
     success: true,

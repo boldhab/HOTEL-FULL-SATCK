@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { Button } from "@/components/ui/actions/button";
 import { ImageWithFallback } from "@/components/media/ImageWithFallback";
+import { apiClient } from "@/lib/api";
 
 const heroImage = "https://images.unsplash.com/photo-1759038085950-1234ca8f5fed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMHJlY2VwdGlvbiUyMGRlc2slMjBjb25jaWVyZ2V8ZW58MXx8fHwxNzczOTI1Mjk5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
 
@@ -18,15 +19,30 @@ export function Contact() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate form submission
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-    }, 3000);
+    setError("");
+
+    try {
+      await apiClient.post("/messages", {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        content: formData.message,
+      });
+      
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+      }, 3000);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.response?.data?.message || "Something went wrong. Please try again.");
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -244,6 +260,16 @@ export function Contact() {
                     </>
                   )}
                 </Button>
+
+                {error && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-red-500 text-center"
+                  >
+                    {error}
+                  </motion.p>
+                )}
 
                 {submitted && (
                   <motion.p

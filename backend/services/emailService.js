@@ -24,7 +24,7 @@ const getTransporter = () => {
   });
 };
 
-const sendMessageReply = async ({ to, subject, text, html }) => {
+const sendMessageReply = async ({ to, subject, text, html, replyTo }) => {
   const transporter = getTransporter();
   const from = process.env.SMTP_FROM || process.env.SMTP_USER;
 
@@ -34,6 +34,7 @@ const sendMessageReply = async ({ to, subject, text, html }) => {
     subject,
     text,
     html,
+    replyTo,
   });
 
   return info;
