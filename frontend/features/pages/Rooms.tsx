@@ -7,7 +7,8 @@ import { ImageWithFallback } from "@/components/media/ImageWithFallback";
 
 const heroImage = "https://images.unsplash.com/photo-1759223198981-661cadbbff36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMGJlZHJvb20lMjBzdWl0ZXxlbnwxfHx8fDE3NzM4OTMwMTV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
 
-const rooms = [
+// Fallback hardcoded rooms incase backend is down
+const fallbackRooms = [
   {
     id: "1",
     name: "Standard Room",
@@ -25,73 +26,21 @@ const rooms = [
     features: ["Free WiFi", "Smart TV", "Coffee Maker", "Work Desk"],
     price: 150,
     maxGuests: 2,
-  },
-  {
-    id: "3",
-    name: "Superior Room",
-    image: "https://images.unsplash.com/photo-1759223198981-661cadbbff36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMGJlZHJvb20lMjBzdWl0ZXxlbnwxfHx8fDE3NzM4OTMwMTV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    description: "Enhanced comfort with premium bedding and exclusive amenities. Enjoy panoramic city views and extra living space.",
-    features: ["Free WiFi", "Mini Bar", "Smart TV", "City View"],
-    price: 200,
-    maxGuests: 3,
-  },
-  {
-    id: "4",
-    name: "Executive Suite",
-    image: "https://images.unsplash.com/photo-1758448511255-ac2a24a135d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMGV4ZWN1dGl2ZSUyMHN1aXRlJTIwbGl2aW5nfGVufDF8fHx8MTc3MzkyNTI5Nnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    description: "Luxurious suite with separate living area and premium amenities. Ideal for extended stays and business travelers.",
-    features: ["Free WiFi", "Work Desk", "Mini Bar", "City View"],
-    price: 250,
-    maxGuests: 3,
-  },
-  {
-    id: "5",
-    name: "Junior Suite",
-    image: "https://images.unsplash.com/photo-1758448511255-ac2a24a135d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMGV4ZWN1dGl2ZSUyMHN1aXRlJTIwbGl2aW5nfGVufDF8fHx8MTc3MzkyNTI5Nnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    description: "Spacious suite offering a blend of comfort and luxury with a separate seating area and elegant décor.",
-    features: ["Free WiFi", "Smart TV", "Mini Bar", "Work Desk"],
-    price: 280,
-    maxGuests: 3,
-  },
-  {
-    id: "6",
-    name: "Presidential Suite",
-    image: "https://images.unsplash.com/photo-1664780476492-fbb9fd277ce8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMHByZXNpZGVudGlhbCUyMHN1aXRlJTIwbHV4dXJ5fGVufDF8fHx8MTc3MzkyNTI5Nnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    description: "The ultimate luxury experience with panoramic views, exclusive services, and lavish amenities. Perfect for special occasions.",
-    features: ["Free WiFi", "Smart TV", "Mini Bar", "City View"],
-    price: 500,
-    maxGuests: 4,
-  },
-  {
-    id: "7",
-    name: "Family Suite",
-    image: "https://images.unsplash.com/photo-1759223198981-661cadbbff36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMGJlZHJvb20lMjBzdWl0ZXxlbnwxfHx8fDE3NzM4OTMwMTV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    description: "Generous space designed for families with connecting rooms and child-friendly amenities. Make lasting memories together.",
-    features: ["Free WiFi", "Smart TV", "Coffee Maker", "City View"],
-    price: 320,
-    maxGuests: 5,
-  },
-  {
-    id: "8",
-    name: "Honeymoon Suite",
-    image: "https://images.unsplash.com/photo-1664780476492-fbb9fd277ce8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMHByZXNpZGVudGlhbCUyMHN1aXRlJTIwbHV4dXJ5fGVufDF8fHx8MTc3MzkyNTI5Nnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    description: "Romantic retreat with luxurious décor, intimate ambiance, and special touches for couples celebrating love.",
-    features: ["Free WiFi", "Mini Bar", "Smart TV", "City View"],
-    price: 400,
-    maxGuests: 2,
-  },
-  {
-    id: "9",
-    name: "Business Suite",
-    image: "https://images.unsplash.com/photo-1758448511255-ac2a24a135d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMGV4ZWN1dGl2ZSUyMHN1aXRlJTIwbGl2aW5nfGVufDF8fHx8MTc3MzkyNTI5Nnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    description: "Tailored for business travelers with a dedicated workspace, meeting area, and high-speed connectivity.",
-    features: ["Free WiFi", "Work Desk", "Mini Bar", "Smart TV"],
-    price: 280,
-    maxGuests: 2,
-  },
+  }
 ];
 
-export function Rooms() {
+export function Rooms({ initialRooms = [] }: { initialRooms?: any[] }) {
+  // Map backend rooms to frontend shape, or use fallback if empty
+  const displayRooms = initialRooms.length > 0 ? initialRooms.map(r => ({
+    id: r.id,
+    name: r.name,
+    image: r.images?.[0] || 'https://images.unsplash.com/photo-1592901147824-212145b050cf?auto=format&fit=crop&q=80&w=1080',
+    description: r.description,
+    features: ["Free WiFi", "Smart TV", "City View"], 
+    price: r.price,
+    maxGuests: r.capacity
+  })) : fallbackRooms;
+
   return (
     <div className="pt-20">
       {/* Hero Section */}
@@ -144,7 +93,7 @@ export function Rooms() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {rooms.map((room, index) => (
+            {displayRooms.map((room: any, index: number) => (
               <RoomCard key={room.id} {...room} index={index} />
             ))}
           </div>
