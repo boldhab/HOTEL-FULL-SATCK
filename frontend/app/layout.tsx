@@ -4,7 +4,7 @@ import "@/styles/index.css";
 import { Layout } from "@/components/layout/Layout";
 
 export const metadata: Metadata = {
-  title: "Ethioberno Hotel",
+  title: "Ethio Bernos Hotel",
   description: "Luxury hospitality frontend built with Next.js.",
 };
 

@@ -96,7 +96,7 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
         <div className="absolute inset-0">
           <ImageWithFallback
             src={heroImage}
-            alt="Ethioberno Hotel"
+            alt="Ethio Bernos Hotel"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/40" />
@@ -151,7 +151,7 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
             >
               <ImageWithFallback
                 src={aboutImage}
-                alt="About Ethioberno Hotel"
+                alt="About Ethio Bernos Hotel"
                 className="w-full h-[400px] md:h-[500px] object-cover rounded-lg shadow-xl"
               />
             </motion.div>
@@ -163,11 +163,11 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
               transition={{ duration: 0.6 }}
             >
               <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">
-                Welcome to Ethioberno
+                Welcome to Ethio Bernos
               </h2>
               <div className="w-20 h-1 bg-[#c9a961] mb-6" />
               <p className="text-gray-700 mb-4 leading-relaxed">
-                Nestled in the heart of Addis Ababa, Ethioberno Hotel offers an unparalleled blend 
+                Nestled in the heart of Addis Ababa, Ethio Bernos Hotel offers an unparalleled blend 
                 of modern luxury and traditional Ethiopian hospitality. Our commitment to excellence 
                 ensures every guest experiences the finest in comfort and service.
               </p>
@@ -337,7 +337,7 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
               <p className="text-xl mb-4">Save 20% on Extended Stays</p>
               <p className="text-gray-300 mb-8">
                 Book 3 nights or more and enjoy an exclusive 20% discount on your stay. 
-                Experience luxury for longer at Ethioberno Hotel.
+                Experience luxury for longer at Ethio Bernos Hotel.
               </p>
               <Button
                 size="lg"

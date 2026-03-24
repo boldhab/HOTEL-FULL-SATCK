@@ -9,7 +9,7 @@ export function Footer() {
           {/* About */}
           <div>
             <div className="mb-4">
-              <h3 className="text-2xl font-serif text-[#c9a961] mb-1">Ethioberno</h3>
+              <h3 className="text-2xl font-serif text-[#c9a961] mb-1">Ethio Bernos</h3>
               <p className="text-xs tracking-widest text-gray-300 uppercase">Hotel</p>
             </div>
             <p className="text-sm text-gray-300 leading-relaxed">
@@ -132,7 +132,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-white/10 text-center">
           <p className="text-sm text-gray-400">
-            &copy; {new Date().getFullYear()} Ethioberno Hotel. All rights reserved.
+            &copy; {new Date().getFullYear()} Ethio Bernos Hotel. All rights reserved.
           </p>
         </div>
       </div>

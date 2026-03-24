@@ -311,7 +311,7 @@ export function Contact() {
               {/* Additional Contact Info */}
               <div className="bg-white p-8 rounded-lg shadow-md">
                 <h3 className="text-xl text-[#1e3a5f] mb-6">
-                  Why Choose Ethioberno?
+                  Why Choose Ethio Bernos?
                 </h3>
                 <ul className="space-y-4">
                   {[

@@ -19,7 +19,7 @@ export function About() {
         <div className="absolute inset-0">
           <ImageWithFallback
             src={heroImage}
-            alt="About Ethioberno Hotel"
+            alt="About Ethio Bernos Hotel"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/50" />
@@ -40,7 +40,7 @@ export function About() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg md:text-xl text-gray-200"
           >
-            Discover the story behind Ethioberno Hotel
+            Discover the story behind Ethio Bernos Hotel
           </motion.p>
         </div>
       </section>
@@ -68,7 +68,7 @@ export function About() {
               className="space-y-6 text-gray-700 leading-relaxed"
             >
               <p>
-                Founded in 2010, Ethioberno Hotel has become a landmark of luxury and hospitality 
+                Founded in 2010, Ethio Bernos Hotel has become a landmark of luxury and hospitality 
                 in Addis Ababa. Our journey began with a simple vision: to create a haven where 
                 travelers from around the world could experience the perfect blend of modern 
                 comfort and authentic Ethiopian warmth.
@@ -79,7 +79,7 @@ export function About() {
                 us numerous accolades and the trust of thousands of satisfied guests.
               </p>
               <p>
-                Today, Ethioberno Hotel stands as a testament to our dedication to providing 
+                Today, Ethio Bernos Hotel stands as a testament to our dedication to providing 
                 unparalleled service, luxurious accommodations, and memorable experiences. Every 
                 member of our team is passionate about ensuring your stay exceeds expectations.
               </p>
@@ -122,7 +122,7 @@ export function About() {
               <h3 className="text-2xl font-serif text-[#1e3a5f] mb-4">Our Vision</h3>
               <p className="text-gray-700 leading-relaxed">
                 To be recognized as the premier luxury hotel in Ethiopia, setting new standards 
-                in hospitality excellence. We envision a future where Ethioberno Hotel is 
+                in hospitality excellence. We envision a future where Ethio Bernos Hotel is 
                 synonymous with luxury, innovation, and authentic Ethiopian culture on the 
                 global stage.
               </p>

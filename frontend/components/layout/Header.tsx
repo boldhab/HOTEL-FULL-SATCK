@@ -35,7 +35,7 @@ export function Header() {
           <Link href="/" className="flex items-center space-x-2">
             <div className="flex flex-col">
               <span className="text-2xl sm:text-3xl text-[#1e3a5f] font-serif tracking-tight">
-                Ethioberno
+                Ethio Bernos
               </span>
               <span className="text-xs tracking-widest text-[#c9a961] uppercase">
                 Hotel
