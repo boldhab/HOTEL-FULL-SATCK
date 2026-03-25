@@ -8,3 +8,20 @@ export const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+export async function fetchCollection<T>(endpoint: string): Promise<T[]> {
+  try {
+    const res = await fetch(`${API_URL}${endpoint}`, {
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      return [];
+    }
+
+    const json = await res.json();
+    return Array.isArray(json?.data) ? json.data : [];
+  } catch {
+    return [];
+  }
+}

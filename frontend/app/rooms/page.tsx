@@ -1,18 +1,9 @@
 import { Rooms } from "@/features/pages/Rooms";
+import { fetchCollection } from "@/lib/api";
 
 // Next.js Server Component Fetch
 async function getRooms() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'}/rooms`, {
-      cache: 'no-store'
-    });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json.data || [];
-  } catch (error) {
-    console.error("Failed to fetch rooms:", error);
-    return [];
-  }
+  return fetchCollection("/rooms");
 }
 
 export default async function Page() {

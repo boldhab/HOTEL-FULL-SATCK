@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 import api from '../services/api';
 
 const Dashboard = () => {
@@ -9,11 +10,13 @@ const Dashboard = () => {
     galleryItems: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [statsError, setStatsError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const response = await api.get('/analytics/totals');
+        setStatsError(null);
         setStats({
           rooms: response.data.rooms || 0,
           services: response.data.services || 0,
@@ -21,7 +24,19 @@ const Dashboard = () => {
           galleryItems: response.data.gallery || 0,
         });
       } catch (err) {
-        console.error('Failed to fetch stats', err);
+        setStats({
+          rooms: 0,
+          services: 0,
+          messages: 0,
+          galleryItems: 0,
+        });
+
+        if (axios.isAxiosError(err) && !err.response) {
+          setStatsError('Dashboard stats are unavailable because the backend API is not reachable.');
+          return;
+        }
+
+        setStatsError('Dashboard stats could not be loaded right now.');
       } finally {
         setLoading(false);
       }
@@ -37,6 +52,11 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">Welcome back, Admin!</h1>
+      {statsError ? (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          {statsError}
+        </div>
+      ) : null}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
           { label: 'Total Rooms', value: stats.rooms, color: 'bg-blue-500' },
