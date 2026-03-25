@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import api from '../services/api';
 
@@ -11,8 +11,15 @@ const Dashboard = () => {
   });
   const [loading, setLoading] = useState(true);
   const [statsError, setStatsError] = useState<string | null>(null);
+  const hasFetchedRef = useRef(false);
 
   useEffect(() => {
+    if (hasFetchedRef.current) {
+      return;
+    }
+
+    hasFetchedRef.current = true;
+
     const fetchStats = async () => {
       try {
         const response = await api.get('/analytics/totals');
