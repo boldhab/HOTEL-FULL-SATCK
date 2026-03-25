@@ -56,24 +56,44 @@ export function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-lg mb-4 text-[#c9a961]">Contact Info</h4>
+            <h4 className="text-lg mb-4 text-[#c9a961]">Location</h4>
             <ul className="space-y-3">
               <li className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-[#c9a961] flex-shrink-0 mt-0.5" />
                 <span className="text-sm text-gray-300">
-                  Bole Road, Addis Ababa<br />Ethiopia
+                  Debre Berhan, Ethiopia
                 </span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-[#c9a961] flex-shrink-0" />
-                <a href="tel:+251911234567" className="text-sm text-gray-300 hover:text-[#c9a961] transition-colors">
-                  +251 911 234 567
+                <span className="text-sm text-gray-300">Ethio Bernos on Map</span>
+              </li>
+            </ul>
+
+            <h4 className="text-lg mt-6 mb-4 text-[#c9a961]">Contacts</h4>
+            <ul className="space-y-3">
+              <li className="flex items-center space-x-3">
+                <Phone className="h-5 w-5 text-[#c9a961] flex-shrink-0" />
+                <a href="tel:+251116375686" className="text-sm text-gray-300 hover:text-[#c9a961] transition-colors">
+                  Tel: +251-116-375686/6679
                 </a>
               </li>
               <li className="flex items-center space-x-3">
+                <Phone className="h-5 w-5 text-[#c9a961] flex-shrink-0" />
+                <a href="tel:+251930362151" className="text-sm text-gray-300 hover:text-[#c9a961] transition-colors">
+                  Mob: +251-930-362151
+                </a>
+              </li>
+              <li className="flex items-center space-x-3">
+                <Phone className="h-5 w-5 text-[#c9a961] flex-shrink-0" />
+                <span className="text-sm text-gray-300">
+                  Fax: +251-116-376719
+                </span>
+              </li>
+              <li className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-[#c9a961] flex-shrink-0" />
-                <a href="mailto:info@ethiobernohotel.com" className="text-sm text-gray-300 hover:text-[#c9a961] transition-colors">
-                  info@ethiobernohotel.com
+                <a href="mailto:ethiobernoshotel@gmail.com" className="text-sm text-gray-300 hover:text-[#c9a961] transition-colors">
+                  Email: ethiobernoshotel@gmail.com
                 </a>
               </li>
             </ul>
