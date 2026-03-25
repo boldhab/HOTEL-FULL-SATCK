@@ -11,7 +11,10 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await api.post('/auth/login', { email, password });
-      const { token } = response.data;
+      const token = response.data?.data?.token;
+      if (!token || typeof token !== 'string') {
+        throw new Error('Token was not returned from login response');
+      }
       localStorage.setItem('adminToken', token);
       navigate('/');
     } catch (err: any) {
