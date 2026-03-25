@@ -20,14 +20,14 @@ const fallbackMainServices = [
     description: "World-class restaurant serving international and local cuisine prepared by expert chefs",
   },
   {
-    icon: Dumbbell,
-    title: "Fitness Center",
-    description: "State-of-the-art gym equipment and personal training services available 24/7",
+    icon: Users,
+    title: "Meeting Hall",
+    description: "Modern meeting halls with flexible layouts for conferences, workshops, and business gatherings.",
   },
   {
     icon: Sparkles,
-    title: "Luxury Spa & Wellness",
-    description: "Rejuvenating spa treatments, massages, and wellness programs for complete relaxation",
+    title: "Events",
+    description: "Professional event hosting for weddings, celebrations, and corporate functions with dedicated coordination.",
   }
 ];
 
@@ -55,6 +55,13 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
     description: s.description
   })) : fallbackMainServices;
 
+  const detailLinkByTitle: Record<string, string> = {
+    "free high-speed wifi": "#services-other",
+    "fine dining restaurant": "#services-restaurant",
+    "meeting hall": "#services-meeting",
+    "events": "#services-events",
+  };
+
   const menuPreview = [
     { name: "Doro Wat", description: "Traditional Ethiopian chicken stew with injera", price: "ETB 420" },
     { name: "Tibs", description: "Sizzling beef cubes with rosemary and onions", price: "ETB 520" },
@@ -66,12 +73,6 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
     "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80",
     "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=900&q=80",
     "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80",
-  ];
-
-  const conferenceLayouts = [
-    "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1000&q=80",
-    "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=80",
-    "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=1000&q=80",
   ];
 
   const eventGallery = [
@@ -100,6 +101,33 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
       icon: Clock,
       title: "24/7 Reception",
       description: "Front desk support at any time for check-in and assistance.",
+    },
+  ];
+
+  const meetingHallShowcase = [
+    {
+      title: "ATSE ZERAYACOB MEETING HALL (አጼ ዘርዐያዕቆብ አዳራሽ)",
+      capacity: "Up to 150 persons with table",
+      description:
+        "Our largest and most elegant hall, ideal for congresses, major conferences, and large formal gatherings.",
+      image:
+        "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1000&q=80",
+    },
+    {
+      title: "AJIMA MEETING HALL (አጅማ አዳራሽ)",
+      capacity: "Up to 100 persons with table",
+      description:
+        "A balanced mid-size function hall designed for company programs, workshops, and professional events.",
+      image:
+        "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=80",
+    },
+    {
+      title: "ELFEGNE MEETING HALL (እልፍኝ አዳራሽ)",
+      capacity: "Up to 50 persons with table",
+      description:
+        "A focused intimate hall for smaller meetings, board sessions, and private business discussions.",
+      image:
+        "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&w=1000&q=80",
     },
   ];
 
@@ -137,7 +165,7 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
       </section>
 
       {/* Main Services Grid */}
-      <section className="py-16 md:py-24 bg-white">
+      <section id="services-overview" className="scroll-mt-32 py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -156,14 +184,19 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {displayServices.map((service: any, index: number) => (
-              <ServiceCard key={service.title} {...service} index={index} />
+              <ServiceCard
+                key={service.title}
+                {...service}
+                detailHref={detailLinkByTitle[String(service.title || "").trim().toLowerCase()]}
+                index={index}
+              />
             ))}
           </div>
         </div>
       </section>
 
       {/* Restaurant / Dining */}
-      <section className="py-16 md:py-24 bg-[#f8f8f8]">
+      <section id="services-restaurant" className="scroll-mt-32 py-16 md:py-24 bg-[#f8f8f8]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-10 items-start">
             <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
@@ -214,34 +247,144 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
       </section>
 
       {/* Conference / Meeting */}
-      <section className="py-16 md:py-24 bg-white">
+      <section id="services-meeting" className="scroll-mt-32 py-16 md:py-24 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-10 rounded-2xl border border-[#dfe6ee] bg-gradient-to-r from-[#f5f8fc] to-white p-6 md:p-8">
+            <div className="grid lg:grid-cols-[1.3fr_1fr] gap-6 items-center">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-3">Our Meeting Hall</h2>
+                <div className="w-20 h-1 bg-[#c9a961] mb-4" />
+                <p className="text-gray-600">
+                  Ethio Bernos Hotel maintains 3 professional meeting halls in the heart of Debre Birhan. Each hall is designed for smooth event delivery with modern facilities and efficient service support.
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                {["150 PAX", "100 PAX", "50 PAX"].map((item) => (
+                  <div key={item} className="rounded-xl border border-[#d9e2ec] bg-white p-4 text-center shadow-sm">
+                    <p className="text-xs uppercase tracking-wide text-gray-500">Capacity</p>
+                    <p className="text-lg font-bold text-[#1e3a5f] mt-1">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <h3 className="text-2xl font-serif text-[#1e3a5f] mb-6 text-center">Meeting Halls Overview</h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              {meetingHallShowcase.map((hall, index) => (
+                <motion.div
+                  key={hall.title}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.06 }}
+                  whileHover={{ y: -4 }}
+                  className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md"
+                >
+                  <ImageWithFallback
+                    src={hall.image}
+                    alt={hall.title}
+                    className="h-52 w-full object-cover"
+                  />
+                  <div className="p-5">
+                    <p className="text-[11px] uppercase tracking-wider text-gray-500 mb-2">Hall {String(index + 1).padStart(2, "0")}</p>
+                    <h4 className="font-semibold text-[#1e3a5f] mb-2 leading-snug">{hall.title}</h4>
+                    <span className="inline-flex items-center rounded-full bg-[#1e3a5f]/10 px-3 py-1 text-xs font-semibold text-[#1e3a5f] mb-3">
+                      {hall.capacity}
+                    </span>
+                    <p className="text-sm text-gray-600">{hall.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mt-8 rounded-xl border border-[#dfe6ee] bg-[#f8fbff] p-5 md:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <p className="text-sm md:text-base text-[#1e3a5f] font-medium">
+                Need help selecting the right hall for your event size and format?
+              </p>
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center px-6 py-3 bg-[#1e3a5f] hover:bg-[#16304f] text-white rounded-md transition-colors"
+              >
+                Send Booking Inquiry
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Events */}
+      <section id="services-events" className="scroll-mt-32 py-16 md:py-24 bg-[#f8f8f8]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">Conference / Meeting Services</h2>
+            <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">Weddings & Events</h2>
             <div className="w-20 h-1 bg-[#c9a961] mx-auto mb-4" />
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Professional meeting spaces for workshops, conferences, and business gatherings.
+            <p className="text-gray-600 max-w-4xl mx-auto">
+              Ethio-Bernos Hotel offers personalized wedding and event experiences with elegant venues, chef-led catering, dedicated coordination, and comfortable guest accommodations.
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-[1fr_1.2fr] gap-8 items-start">
-            <motion.div initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="rounded-xl bg-[#f8f8f8] border border-gray-200 p-6">
-              <h3 className="text-xl font-semibold text-[#1e3a5f] mb-2">Meeting Hall Capacity</h3>
-              <p className="text-3xl font-bold text-[#1e3a5f] mb-4">Up to 50 People</p>
-              <p className="text-sm text-gray-600 mb-6">Flexible room setup with projector support, audio system, and hospitality service.</p>
-              <Link href="/contact" className="inline-flex items-center justify-center px-5 py-3 bg-[#1e3a5f] hover:bg-[#16304f] text-white rounded-md transition-colors">
-                Send Booking Inquiry
-              </Link>
+          <div className="grid lg:grid-cols-[1.05fr_1fr] gap-8 items-start">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="rounded-2xl border border-[#dfe6ee] bg-white p-6 md:p-7 shadow-sm"
+            >
+              <p className="text-xs uppercase tracking-[0.16em] text-[#1e3a5f]/70 mb-2">Event Services</p>
+              <h3 className="text-xl md:text-2xl font-serif text-[#1e3a5f] mb-5">Why Celebrate With Us</h3>
+              <h4 className="text-sm font-semibold text-[#1e3a5f] mb-3">What You Get</h4>
+              <div className="space-y-3">
+                {[
+                  "Private and beautifully decorated event spaces",
+                  "Chef-led catering with custom menu planning",
+                  "Dedicated event coordinator from planning to closing",
+                  "Elegant venues for rehearsal dinners and receptions",
+                  "Comfortable guest accommodations for families and groups",
+                ].map((point) => (
+                  <div key={point} className="flex items-start gap-3">
+                    <span className="mt-2 h-2 w-2 rounded-full bg-[#c9a961] flex-shrink-0" />
+                    <p className="text-sm text-gray-700">{point}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 grid sm:grid-cols-2 gap-4">
+                <div className="rounded-xl bg-[#f8fbff] border border-[#dfe6ee] p-4">
+                  <h4 className="text-sm font-semibold text-[#1e3a5f] mb-2">Ideal For</h4>
+                  <p className="text-sm text-gray-700">Weddings, honeymoons, rehearsal dinners, receptions, and private celebrations.</p>
+                </div>
+                <div className="rounded-xl bg-[#f8fbff] border border-[#dfe6ee] p-4">
+                  <h4 className="text-sm font-semibold text-[#1e3a5f] mb-2">Planning Process</h4>
+                  <p className="text-sm text-gray-700">Consultation, customization, execution, and on-site coordination from start to finish.</p>
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-xl bg-[#f3f7fb] border border-[#d7e2ef] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <p className="text-sm text-[#1e3a5f] font-medium">
+                  Let our team craft a personalized event experience that reflects your style and expectations.
+                </p>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center px-6 py-3 bg-[#1e3a5f] hover:bg-[#16304f] text-white rounded-md transition-colors"
+                >
+                  Plan Your Event
+                </Link>
+              </div>
             </motion.div>
 
-            <div className="grid sm:grid-cols-3 gap-4">
-              {conferenceLayouts.map((src, index) => (
-                <motion.div key={src} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }}>
-                  <ImageWithFallback
-                    src={src}
-                    alt="Conference layout"
-                    className="h-44 w-full rounded-xl object-cover"
-                  />
+            <div className="grid md:grid-cols-2 gap-5">
+              {eventGallery.map((src, index) => (
+                <motion.div
+                  key={src}
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.08 }}
+                  className={index === 0 ? "md:col-span-2" : ""}
+                >
+                  <ImageWithFallback src={src} alt="Past event at Ethio Bernos" className="h-56 w-full rounded-xl object-cover shadow-sm" />
                 </motion.div>
               ))}
             </div>
@@ -249,29 +392,8 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
         </div>
       </section>
 
-      {/* Events */}
-      <section className="py-16 md:py-24 bg-[#f8f8f8]">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">Events</h2>
-            <div className="w-20 h-1 bg-[#c9a961] mx-auto mb-4" />
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Weddings, private parties, and business events hosted with tailored support and venue styling.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-5">
-            {eventGallery.map((src, index) => (
-              <motion.div key={src} initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }}>
-                <ImageWithFallback src={src} alt="Past event at Ethio Bernos" className="h-56 w-full rounded-xl object-cover shadow-sm" />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Basic Amenities */}
-      <section className="py-16 md:py-24 bg-white">
+      <section id="services-other" className="scroll-mt-32 py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">Basic Amenities</h2>

@@ -7,10 +7,11 @@ interface ServiceCardProps {
   icon: LucideIcon;
   title: string;
   description: string;
+  detailHref?: string;
   index?: number;
 }
 
-export function ServiceCard({ icon: Icon, title, description, index = 0 }: ServiceCardProps) {
+export function ServiceCard({ icon: Icon, title, description, detailHref, index = 0 }: ServiceCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -24,6 +25,14 @@ export function ServiceCard({ icon: Icon, title, description, index = 0 }: Servi
       </div>
       <h3 className="text-lg text-[#1e3a5f] mb-2">{title}</h3>
       <p className="text-sm text-gray-600">{description}</p>
+      {detailHref ? (
+        <a
+          href={detailHref}
+          className="mt-4 inline-flex items-center text-sm font-semibold text-[#1e3a5f] hover:text-[#c9a961] transition-colors"
+        >
+          View Detail
+        </a>
+      ) : null}
     </motion.div>
   );
 }
