@@ -11,21 +11,80 @@ const heroImage = "https://images.unsplash.com/photo-1759223198981-661cadbbff36?
 const fallbackRooms = [
   {
     id: "1",
-    name: "Standard Room",
+    name: "Deluxe King Room",
     image: "https://images.unsplash.com/photo-1592901147824-212145b050cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMGRlbHV4ZSUyMHJvb20lMjBiZWR8ZW58MXx8fHwxNzczOTA3NTYzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    description: "Comfortable and well-appointed room perfect for solo travelers or couples. Features modern amenities and a cozy atmosphere.",
-    features: ["Free WiFi", "Smart TV", "Coffee Maker", "City View"],
-    price: 100,
+    description: "Comfortable, well-appointed room with modern finishes for business or leisure stays.",
+    features: ["Free WiFi", "Smart TV", "Coffee Maker", "Rain Shower"],
+    price: 150,
     maxGuests: 2,
+    size: "30 m2",
+    bedType: "King Bed",
+    viewType: "City View",
+    occupancy: "2 adults + 1 child",
+    tagline: "Includes breakfast and free Wi-Fi",
+    amenities: ["WiFi", "Smart TV", "Minibar", "Rain Shower", "Coffee Maker"],
+    policies: [
+      "Check-in: 2:00 PM | Check-out: 12:00 PM",
+      "Free cancellation up to 24 hours before arrival",
+      "Extra bed available on request",
+    ],
+    gallery: [
+      "https://images.unsplash.com/photo-1592901147824-212145b050cf?auto=format&fit=crop&q=80&w=1080",
+      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=1080",
+      "https://images.unsplash.com/photo-1551776235-dde6d4829808?auto=format&fit=crop&q=80&w=1080",
+    ],
   },
   {
     id: "2",
-    name: "Deluxe Room",
+    name: "Executive Twin Suite",
     image: "https://images.unsplash.com/photo-1592901147824-212145b050cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMGRlbHV4ZSUyMHJvb20lMjBiZWR8ZW58MXx8fHwxNzczOTA3NTYzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    description: "Spacious room with modern amenities and stunning city views. Perfect for both business and leisure travelers.",
-    features: ["Free WiFi", "Smart TV", "Coffee Maker", "Work Desk"],
-    price: 150,
-    maxGuests: 2,
+    description: "Spacious suite with twin beds, dedicated workspace, and upgraded comforts.",
+    features: ["Free WiFi", "Smart TV", "Mini Bar", "Work Desk"],
+    price: 250,
+    maxGuests: 3,
+    size: "42 m2",
+    bedType: "Twin Beds",
+    viewType: "Garden View",
+    occupancy: "3 adults",
+    tagline: "Suite comfort with lounge space and business-friendly setup",
+    amenities: ["WiFi", "Smart TV", "Minibar", "Work Desk", "Rain Shower"],
+    policies: [
+      "Check-in: 2:00 PM | Check-out: 12:00 PM",
+      "Non-smoking room",
+      "Late checkout subject to availability",
+    ],
+    gallery: [
+      "https://images.unsplash.com/photo-1758448511255-ac2a24a135d7?auto=format&fit=crop&q=80&w=1080",
+      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80&w=1080",
+      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=1080",
+    ],
+    isFeatured: true,
+  },
+  {
+    id: "3",
+    name: "Presidential Balcony Suite",
+    image: "https://images.unsplash.com/photo-1664780476492-fbb9fd277ce8?auto=format&fit=crop&q=80&w=1080",
+    description: "Our signature suite with panoramic balcony views and an expansive living area.",
+    features: ["Free WiFi", "Smart TV", "Mini Bar", "Rain Shower"],
+    price: 500,
+    maxGuests: 4,
+    size: "65 m2",
+    bedType: "King Bed",
+    viewType: "Balcony View",
+    occupancy: "4 adults",
+    tagline: "Premium suite with private balcony and elevated amenities",
+    amenities: ["WiFi", "Smart TV", "Minibar", "Rain Shower", "Coffee Maker"],
+    policies: [
+      "Check-in: 2:00 PM | Check-out: 12:00 PM",
+      "Free cancellation up to 48 hours before arrival",
+      "Complimentary fruit basket on arrival",
+    ],
+    gallery: [
+      "https://images.unsplash.com/photo-1664780476492-fbb9fd277ce8?auto=format&fit=crop&q=80&w=1080",
+      "https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&q=80&w=1080",
+      "https://images.unsplash.com/photo-1722794313028-a00700226fd7?auto=format&fit=crop&q=80&w=1080",
+    ],
+    isFeatured: true,
   }
 ];
 
@@ -36,9 +95,22 @@ export function Rooms({ initialRooms = [] }: { initialRooms?: any[] }) {
     name: r.name,
     image: r.images?.[0] || 'https://images.unsplash.com/photo-1592901147824-212145b050cf?auto=format&fit=crop&q=80&w=1080',
     description: r.description,
-    features: ["Free WiFi", "Smart TV", "City View"], 
+    features: ["Free WiFi", "Smart TV", "Mini Bar", "Rain Shower"], 
     price: r.price,
-    maxGuests: r.capacity
+    maxGuests: r.capacity,
+    size: r.size || "30 m2",
+    bedType: r.bedType || "King Bed",
+    viewType: r.viewType || "City View",
+    occupancy: r.occupancy || `${r.capacity || 2} adults`,
+    tagline: r.tagline || "Includes breakfast and free Wi-Fi",
+    amenities: r.amenities || ["WiFi", "Smart TV", "Minibar", "Rain Shower", "Coffee Maker"],
+    policies: r.policies || [
+      "Check-in: 2:00 PM | Check-out: 12:00 PM",
+      "Free cancellation up to 24 hours before arrival",
+      "Extra bed available on request",
+    ],
+    gallery: r.images?.length ? r.images : [r.images?.[0] || 'https://images.unsplash.com/photo-1592901147824-212145b050cf?auto=format&fit=crop&q=80&w=1080'],
+    isFeatured: Boolean(r.isFeatured)
   })) : fallbackRooms;
 
   return (
@@ -69,7 +141,7 @@ export function Rooms({ initialRooms = [] }: { initialRooms?: any[] }) {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg md:text-xl text-gray-200"
           >
-            Find your perfect sanctuary
+            Choose your perfect stay
           </motion.p>
         </div>
       </section>
@@ -88,7 +160,7 @@ export function Rooms({ initialRooms = [] }: { initialRooms?: any[] }) {
             </h2>
             <div className="w-20 h-1 bg-[#c9a961] mx-auto mb-4" />
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Each room is thoughtfully designed to provide comfort, style, and all the amenities you need
+              Compare size, bed type, view, occupancy, and highlights to find the room that fits your trip.
             </p>
           </motion.div>
 
