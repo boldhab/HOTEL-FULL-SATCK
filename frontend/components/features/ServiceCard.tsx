@@ -28,7 +28,7 @@ export function ServiceCard({ icon: Icon, title, description, detailHref, index 
       {detailHref ? (
         <a
           href={detailHref}
-          className="mt-4 inline-flex items-center text-sm font-semibold text-[#1e3a5f] hover:text-[#c9a961] transition-colors"
+          className="mt-4 inline-flex items-center justify-center rounded-md border border-[#1e3a5f]/20 bg-[#f3f8ff] px-4 py-2 text-sm font-semibold text-[#1e3a5f] hover:bg-[#1e3a5f] hover:text-white transition-colors"
         >
           View Detail
         </a>

@@ -1,19 +1,30 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* Brand Identity System */
+  --brand-primary: #2f2017;
+  --brand-primary-light: #4a3427;
+  --brand-accent: #d4af37;
+  --brand-accent-hover: #b9972b;
+  --brand-bg: #ffffff;
+  --brand-section-bg: #f8f6f3;
+  --brand-text: #1f1f1f;
+  --brand-muted: #777777;
+
   --font-size: 16px;
-  --background: #ffffff;
-  --foreground: oklch(0.145 0 0);
+  --background: var(--brand-bg);
+  --foreground: var(--brand-text);
   --card: #ffffff;
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: var(--brand-text);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: #030213;
-  --primary-foreground: oklch(1 0 0);
+  --popover-foreground: var(--brand-text);
+  /* Primary action color = brand accent (gold) */
+  --primary: var(--brand-accent);
+  --primary-foreground: #111111;
   --secondary: oklch(0.95 0.0058 264.53);
   --secondary-foreground: #030213;
   --muted: #ececf0;
-  --muted-foreground: #717182;
+  --muted-foreground: var(--brand-muted);
   --accent: #e9ebef;
   --accent-foreground: #030213;
   --destructive: #d4183d;
@@ -42,6 +53,15 @@
 }
 
 .dark {
+  --brand-primary: #6b4a33;
+  --brand-primary-light: #7b5942;
+  --brand-accent: #d4af37;
+  --brand-accent-hover: #c19b2e;
+  --brand-bg: #0f1722;
+  --brand-section-bg: #162130;
+  --brand-text: #f3f4f6;
+  --brand-muted: #a5adbb;
+
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.145 0 0);
@@ -177,5 +197,111 @@
     font-size: var(--text-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
+  }
+}
+
+@layer utilities {
+  /* Brand alias for existing hardcoded project colors */
+  .bg-\[\#1e3a5f\] {
+    background-color: var(--brand-primary) !important;
+  }
+
+  .text-\[\#1e3a5f\] {
+    color: var(--brand-primary) !important;
+  }
+
+  .border-\[\#1e3a5f\] {
+    border-color: var(--brand-primary) !important;
+  }
+
+  .bg-\[\#c9a961\] {
+    background-color: var(--brand-accent) !important;
+  }
+
+  .text-\[\#c9a961\] {
+    color: var(--brand-accent) !important;
+  }
+
+  .hover\:bg-\[\#b89851\]:hover {
+    background-color: var(--brand-accent-hover) !important;
+  }
+
+  .hover\:text-\[\#c9a961\]:hover {
+    color: var(--brand-accent) !important;
+  }
+
+  .bg-\[\#f8f8f8\] {
+    background-color: var(--brand-section-bg) !important;
+  }
+
+  .bg-\[\#f8fbff\],
+  .bg-\[\#f3f7fb\],
+  .bg-\[\#f4f8fc\],
+  .bg-\[\#f5f8fc\] {
+    background-color: color-mix(in srgb, var(--brand-section-bg) 82%, #ffffff 18%) !important;
+  }
+
+  /* Global dark-mode bridge for pages using fixed light utility classes */
+  .dark .bg-white {
+    background-color: #0f1f33 !important;
+  }
+
+  .dark .bg-gray-50 {
+    background-color: #14253a !important;
+  }
+
+  .dark .bg-gray-100 {
+    background-color: #1a2d44 !important;
+  }
+
+  .dark .text-gray-900 {
+    color: #f3f4f6 !important;
+  }
+
+  .dark .text-gray-800,
+  .dark .text-gray-700 {
+    color: #d1d5db !important;
+  }
+
+  .dark .text-gray-600,
+  .dark .text-gray-500,
+  .dark .text-gray-400 {
+    color: #9ca3af !important;
+  }
+
+  .dark .border-gray-100,
+  .dark .border-gray-200,
+  .dark .border-gray-300 {
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+
+  .dark .hover\:bg-gray-50:hover {
+    background-color: #1a2d44 !important;
+  }
+
+  .dark .hover\:text-\[\#c9a961\]:hover {
+    color: #e0bd72 !important;
+  }
+
+  /* Project-specific brand utility classes */
+  .dark .text-\[\#1e3a5f\] {
+    color: #e5edf7 !important;
+  }
+
+  .dark .bg-\[\#f8f8f8\] {
+    background-color: #122338 !important;
+  }
+
+  .dark .bg-\[\#f8fbff\],
+  .dark .bg-\[\#f3f7fb\],
+  .dark .bg-\[\#f4f8fc\],
+  .dark .bg-\[\#f5f8fc\] {
+    background-color: #17304a !important;
+  }
+
+  .dark .border-\[\#dfe6ee\],
+  .dark .border-\[\#d9e2ec\],
+  .dark .border-\[\#d7e2ef\] {
+    border-color: rgba(255, 255, 255, 0.2) !important;
   }
 }

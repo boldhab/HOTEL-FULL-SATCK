@@ -62,6 +62,13 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
     "events": "#services-events",
   };
 
+  const quickAccessLinks = [
+    { label: "Restaurant", href: "#services-restaurant" },
+    { label: "Meeting Halls", href: "#services-meeting" },
+    { label: "Weddings & Events", href: "#services-events" },
+    { label: "Amenities", href: "#services-other" },
+  ];
+
   const menuPreview = [
     { name: "Doro Wat", description: "Traditional Ethiopian chicken stew with injera", price: "ETB 420" },
     { name: "Tibs", description: "Sizzling beef cubes with rosemary and onions", price: "ETB 520" },
@@ -164,6 +171,23 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
         </div>
       </section>
 
+      {/* Quick Jump */}
+      <section className="sticky top-20 z-20 border-y border-[#d9e2ec] bg-white/95 backdrop-blur">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="flex flex-wrap justify-center gap-2">
+            {quickAccessLinks.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="rounded-full border border-[#1e3a5f]/15 bg-[#f4f8fc] px-4 py-2 text-sm font-medium text-[#1e3a5f] transition-colors hover:bg-[#1e3a5f] hover:text-white"
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Main Services Grid */}
       <section id="services-overview" className="scroll-mt-32 py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -202,9 +226,7 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
             <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">Restaurant / Dining</h2>
               <div className="w-20 h-1 bg-[#c9a961] mb-6" />
-              <p className="text-gray-600 mb-6">
-                Enjoy Ethiopian and international dishes prepared by our chefs, with curated beverages in a calm dining atmosphere.
-              </p>
+              <p className="text-gray-600 mb-6">Ethiopian and international dining in a refined, comfortable setting.</p>
               <div className="bg-white rounded-xl border border-gray-200 p-5">
                 <h3 className="text-lg font-semibold text-[#1e3a5f] mb-4">Menu Preview</h3>
                 <div className="space-y-3">
@@ -222,6 +244,23 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
               <div className="mt-4 inline-flex items-center rounded-full bg-[#1e3a5f] px-4 py-2 text-sm text-white">
                 Open Hours: 6:30 AM - 11:00 PM
               </div>
+              <div className="mt-5 grid grid-cols-2 gap-3 max-w-md">
+                {[
+                  { label: "Cuisine", value: "Ethiopian + International" },
+                  { label: "Response Time", value: "Within 1 hour" },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-lg border border-gray-200 bg-white p-3">
+                    <p className="text-xs uppercase text-gray-500">{item.label}</p>
+                    <p className="text-sm font-semibold text-[#1e3a5f] mt-1">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+              <Link
+                href="/contact?subject=dining"
+                className="mt-5 inline-flex items-center justify-center px-6 py-3 bg-[#1e3a5f] hover:bg-[#16304f] text-white rounded-md transition-colors"
+              >
+                Inquire Dining
+              </Link>
             </motion.div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -254,9 +293,7 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
               <div>
                 <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-3">Our Meeting Hall</h2>
                 <div className="w-20 h-1 bg-[#c9a961] mb-4" />
-                <p className="text-gray-600">
-                  Ethio Bernos Hotel maintains 3 professional meeting halls in the heart of Debre Birhan. Each hall is designed for smooth event delivery with modern facilities and efficient service support.
-                </p>
+                <p className="text-gray-600">Three professional halls with efficient support for workshops, conferences, and corporate gatherings.</p>
               </div>
               <div className="grid grid-cols-3 gap-3">
                 {["150 PAX", "100 PAX", "50 PAX"].map((item) => (
@@ -304,10 +341,10 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
                 Need help selecting the right hall for your event size and format?
               </p>
               <Link
-                href="/contact"
+                href="/contact?subject=meeting"
                 className="inline-flex items-center justify-center px-6 py-3 bg-[#1e3a5f] hover:bg-[#16304f] text-white rounded-md transition-colors"
               >
-                Send Booking Inquiry
+                Book Meeting Hall
               </Link>
             </div>
           </motion.div>
@@ -366,7 +403,7 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
                   Let our team craft a personalized event experience that reflects your style and expectations.
                 </p>
                 <Link
-                  href="/contact"
+                  href="/contact?subject=event"
                   className="inline-flex items-center justify-center px-6 py-3 bg-[#1e3a5f] hover:bg-[#16304f] text-white rounded-md transition-colors"
                 >
                   Plan Your Event
@@ -389,6 +426,19 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
               ))}
             </div>
           </div>
+
+          <div className="mt-8 grid sm:grid-cols-3 gap-4">
+            {[
+              { label: "Events Hosted", value: "250+" },
+              { label: "Guest Satisfaction", value: "4.8/5" },
+              { label: "Planner Support", value: "Dedicated Team" },
+            ].map((metric) => (
+              <div key={metric.label} className="rounded-xl border border-[#dfe6ee] bg-white p-4 text-center shadow-sm">
+                <p className="text-xs uppercase text-gray-500">{metric.label}</p>
+                <p className="text-lg font-bold text-[#1e3a5f] mt-1">{metric.value}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -398,6 +448,7 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">Basic Amenities</h2>
             <div className="w-20 h-1 bg-[#c9a961] mx-auto mb-4" />
+            <p className="text-gray-600 max-w-2xl mx-auto">Essential services that make every stay smooth, comfortable, and connected.</p>
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
@@ -417,6 +468,49 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
                 <h3 className="font-semibold text-[#1e3a5f] mb-2">{amenity.title}</h3>
                 <p className="text-sm text-gray-600">{amenity.description}</p>
               </motion.div>
+            ))}
+          </div>
+          <div className="mt-8 flex justify-center">
+            <Link
+              href="/contact?subject=amenities"
+              className="inline-flex items-center justify-center px-6 py-3 bg-[#1e3a5f] hover:bg-[#16304f] text-white rounded-md transition-colors"
+            >
+              Ask About Amenities
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-16 md:py-20 bg-[#f8f8f8]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">Service FAQ</h2>
+            <div className="w-20 h-1 bg-[#c9a961] mx-auto mb-4" />
+          </motion.div>
+          <div className="max-w-4xl mx-auto space-y-4">
+            {[
+              {
+                q: "How fast do you respond to event and meeting inquiries?",
+                a: "Our team typically responds within 1 business hour during working time.",
+              },
+              {
+                q: "Can I request custom menu options for events?",
+                a: "Yes. Our chefs prepare customized menu plans for meetings, weddings, and private events.",
+              },
+              {
+                q: "Do you provide setup support for meetings and conferences?",
+                a: "Yes. We support layout setup, AV/IT assistance, and on-site coordination.",
+              },
+              {
+                q: "What is your cancellation policy for service bookings?",
+                a: "Cancellation terms depend on event size and package. Contact us for the exact policy.",
+              },
+            ].map((item) => (
+              <div key={item.q} className="rounded-xl border border-gray-200 bg-white p-5">
+                <h3 className="font-semibold text-[#1e3a5f] mb-2">{item.q}</h3>
+                <p className="text-sm text-gray-600">{item.a}</p>
+              </div>
             ))}
           </div>
         </div>

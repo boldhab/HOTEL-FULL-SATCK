@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Phone } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/actions/button";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,13 +29,13 @@ export function Header() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[var(--brand-primary)]/95 backdrop-blur-sm border-b border-white/10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <div className="flex flex-col">
-              <span className="text-2xl sm:text-3xl text-[#1e3a5f] font-serif tracking-tight">
+              <span className="text-2xl sm:text-3xl text-white font-serif tracking-tight">
                 Ethio Bernos
               </span>
               <span className="text-xs tracking-widest text-[#c9a961] uppercase">
@@ -51,13 +52,13 @@ export function Header() {
                 href={link.path}
                 className={`text-sm tracking-wide transition-colors relative group ${
                   isActive(link.path)
-                    ? "text-[#c9a961]"
-                    : "text-gray-700 hover:text-[#c9a961]"
-                }`}
+                    ? "text-[var(--brand-accent)]"
+                    : "text-white/85 hover:text-[var(--brand-accent)]"
+                  }`}
               >
                 {link.name}
                 <span
-                  className={`absolute -bottom-1 left-0 w-full h-0.5 bg-[#c9a961] transition-transform origin-left ${
+                  className={`absolute -bottom-1 left-0 w-full h-0.5 bg-[var(--brand-accent)] transition-transform origin-left ${
                     isActive(link.path) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                   }`}
                 />
@@ -67,11 +68,12 @@ export function Header() {
 
           {/* Desktop CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
-            <a href="tel:+251911234567" className="text-[#1e3a5f] hover:text-[#c9a961] transition-colors">
+            <ThemeToggle />
+            <a href="tel:+251911234567" className="text-white hover:text-[var(--brand-accent)] transition-colors">
               <Phone className="h-5 w-5" />
             </a>
             <Button
-              className="bg-[#c9a961] hover:bg-[#b89851] text-white px-6"
+              className="bg-[var(--brand-accent)] hover:bg-[var(--brand-accent-hover)] text-black px-6"
               asChild
             >
               <Link href="/contact">Book Now</Link>
@@ -80,7 +82,7 @@ export function Header() {
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden text-gray-700 hover:text-[#c9a961] transition-colors"
+            className="lg:hidden text-white hover:text-[var(--brand-accent)] transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -97,7 +99,7 @@ export function Header() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="lg:hidden border-t border-gray-200 bg-white overflow-hidden"
+            className="lg:hidden border-t border-white/10 bg-[var(--brand-primary)] overflow-hidden"
           >
             <nav className="container mx-auto px-4 py-4 space-y-4">
               {navLinks.map((link) => (
@@ -106,8 +108,8 @@ export function Header() {
                   href={link.path}
                   className={`block py-2 text-sm tracking-wide transition-colors ${
                     isActive(link.path)
-                      ? "text-[#c9a961]"
-                      : "text-gray-700 hover:text-[#c9a961]"
+                      ? "text-[var(--brand-accent)]"
+                      : "text-white/85 hover:text-[var(--brand-accent)]"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -115,15 +117,19 @@ export function Header() {
                 </Link>
               ))}
               <div className="pt-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-white/80">Theme</span>
+                  <ThemeToggle />
+                </div>
                 <a
                   href="tel:+251911234567"
-                  className="flex items-center space-x-2 text-gray-700 hover:text-[#c9a961] transition-colors"
+                  className="flex items-center space-x-2 text-white/85 hover:text-[var(--brand-accent)] transition-colors"
                 >
                   <Phone className="h-5 w-5" />
                   <span className="text-sm">+251 911 234 567</span>
                 </a>
                 <Button
-                  className="w-full bg-[#c9a961] hover:bg-[#b89851] text-white"
+                  className="w-full bg-[var(--brand-accent)] hover:bg-[var(--brand-accent-hover)] text-black"
                   asChild
                   onClick={() => setIsMenuOpen(false)}
                 >
