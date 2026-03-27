@@ -19,6 +19,7 @@ const NAV_LINKS = [
 ] as const;
 
 const SCROLL_THRESHOLD = 50;
+const HOME_HEADER_OFFSET = 140;
 const CONTACT_NUMBER = "+251911234567";
 
 export function Header() {
@@ -26,31 +27,28 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   const { scrollY } = useScroll();
+  const isHomePage = pathname === "/";
+  const showSolidHeader = !isHomePage || isScrolled || isMenuOpen;
 
-  // Scroll-based transformations
-  const backgroundColor = useTransform(
-    scrollY,
-    [0, 100],
-    ["rgba(92, 62, 46, 0.92)", "rgba(92, 62, 46, 0.98)"]
-  );
-
-  const backdropBlur = useTransform(
-    scrollY,
-    [0, 100],
-    ["blur(8px)", "blur(12px)"]
-  );
-
+  // Scroll progress indicator
   const scrollProgress = useTransform(scrollY, [0, 1000], [0, 1]);
 
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > SCROLL_THRESHOLD);
+      const homeThreshold = Math.max(window.innerHeight - HOME_HEADER_OFFSET, SCROLL_THRESHOLD);
+      const threshold = pathname === "/" ? homeThreshold : SCROLL_THRESHOLD;
+      setIsScrolled(window.scrollY > threshold);
     };
-    
+
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    window.addEventListener("resize", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [pathname]);
 
   // Memoized active route checker
   const isActiveRoute = useCallback((path: string) => {
@@ -92,8 +90,13 @@ export function Header() {
 
   return (
     <motion.header
-      style={{ backgroundColor, backdropFilter: backdropBlur }}
-      className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 transition-shadow duration-300"
+      style={{
+        backgroundColor: showSolidHeader ? "rgba(92, 62, 46, 0.95)" : "transparent",
+        backdropFilter: showSolidHeader ? "blur(12px)" : "blur(0px)",
+      }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        showSolidHeader ? "border-b border-white/10 shadow-md" : "border-b border-transparent"
+      }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}

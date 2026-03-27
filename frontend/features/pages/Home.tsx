@@ -215,7 +215,7 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
   }, [testimonials.length]);
 
   return (
-    <div className="pt-20 overflow-x-hidden">
+    <div className="overflow-x-hidden">
       {/* Hero Section */}
       <section ref={heroRef} className="relative h-[100vh] flex items-center justify-center overflow-hidden">
         <motion.div 
@@ -234,32 +234,32 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
           initial={{ opacity: 0, y: -18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="absolute top-6 left-0 right-0 z-20 px-4"
+          className="absolute top-20 sm:top-24 lg:top-24 left-0 right-0 z-20 px-4"
         >
           <div className="container mx-auto">
-            <div className="mx-auto max-w-6xl rounded-2xl border border-white/20 bg-black/35 backdrop-blur-md px-4 py-4 md:px-6">
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div className="flex flex-col gap-2 text-white">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="text-sm tracking-[0.2em] text-[#c9a961] uppercase">Ethio Bernos Hotel</span>
+            <div className="mx-auto max-w-5xl rounded-2xl border border-white/20 bg-black/35 backdrop-blur-md px-3 py-3 md:px-5">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-col gap-1.5 text-white">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <span className="text-xs sm:text-sm tracking-[0.18em] text-[#c9a961] uppercase">Ethio Bernos Hotel</span>
                     <span className="h-1 w-1 rounded-full bg-white/70" />
-                    <span className="text-sm text-white/85">Trusted by travelers in Addis Ababa</span>
+                    <span className="text-xs sm:text-sm text-white/85">Trusted by travelers in Addis Ababa</span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-4 text-sm">
+                  <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
                     <div className="flex items-center gap-1.5">
                       <div className="flex items-center text-[#c9a961]">
                         {Array.from({ length: 5 }).map((_, index) => (
-                          <Star key={index} className="h-4 w-4 fill-current" />
+                          <Star key={index} className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-current" />
                         ))}
                       </div>
                       <span className="font-semibold text-white">4.8</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-white/90">
-                      <Users className="h-4 w-4 text-[#c9a961]" />
+                      <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#c9a961]" />
                       <span>412 verified reviews</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-white/90">
-                      <MapPin className="h-4 w-4 text-[#c9a961]" />
+                      <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#c9a961]" />
                       <span>Bole Road, Addis Ababa</span>
                     </div>
                   </div>
@@ -270,16 +270,16 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
                     href="https://maps.google.com/?q=Ethio+Bernos+Hotel+Addis+Ababa"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/20"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-3 py-1.5 text-xs sm:text-sm font-medium text-white transition hover:bg-white/20"
                   >
-                    <MapPin className="h-4 w-4 text-[#c9a961]" />
+                    <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#c9a961]" />
                     View Map
                   </a>
                   <a
                     href="tel:+251116375686"
-                    className="inline-flex items-center gap-2 rounded-full bg-[#c9a961] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#b89851]"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-[#c9a961] px-3 py-1.5 text-xs sm:text-sm font-semibold text-white transition hover:bg-[#b89851]"
                   >
-                    <Phone className="h-4 w-4" />
+                    <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     Call Hotel
                   </a>
                 </div>
@@ -288,23 +288,12 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
           </div>
         </motion.div>
 
-        <div className="relative z-10 text-center text-white px-4 max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="mb-4"
-          >
-            <span className="inline-block px-4 py-1 bg-[#c9a961]/20 backdrop-blur-sm rounded-full text-sm tracking-wide border border-[#c9a961]/30">
-              WELCOME TO ETHIO BERNOS
-            </span>
-          </motion.div>
-          
+        <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto pt-44 sm:pt-48 md:pt-52 lg:pt-56">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-serif mb-6 leading-tight"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif mb-5 sm:mb-6 leading-[1.08] tracking-tight text-balance"
           >
             Experience Luxury
             <br />
@@ -323,7 +312,7 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-lg md:text-xl mb-10 text-gray-200 max-w-2xl mx-auto"
+            className="text-base sm:text-lg md:text-xl mb-8 sm:mb-10 text-white/90 max-w-3xl mx-auto leading-relaxed"
           >
             Where elegance meets exceptional hospitality in the heart of Addis Ababa
           </motion.p>
@@ -332,11 +321,11 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center"
           >
             <Button
               size="lg"
-              className="bg-[#c9a961] hover:bg-[#b89851] text-white px-8 py-6 text-lg group relative overflow-hidden"
+              className="w-full sm:w-auto bg-[#c9a961] hover:bg-[#b89851] text-white px-8 py-6 text-base sm:text-lg rounded-full min-w-[180px] group relative overflow-hidden"
               asChild
             >
               <Link href="/rooms">
@@ -360,7 +349,7 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
             <Button
               size="lg"
               variant="outline"
-              className="border-white text-white hover:bg-white hover:text-[#1e3a5f] px-8 py-6 text-lg backdrop-blur-sm"
+              className="w-full sm:w-auto border-white/80 text-white hover:bg-white hover:text-[#1e3a5f] px-8 py-6 text-base sm:text-lg rounded-full min-w-[180px] backdrop-blur-sm bg-white/5"
               asChild
             >
               <Link href="/contact">
@@ -500,7 +489,7 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 mb-12">
             {displayRooms.map((room: any, index: number) => (
               <RoomCard key={room.id} {...room} index={index} />
             ))}

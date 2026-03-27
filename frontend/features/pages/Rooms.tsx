@@ -139,9 +139,35 @@ export function Rooms({ initialRooms = [] }: { initialRooms?: any[] }) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-xl text-gray-200"
+            className="text-lg md:text-xl text-gray-200 mb-6"
           >
             Choose your perfect stay
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.35 }}
+            className="inline-flex flex-col sm:flex-row gap-3 sm:gap-4 mb-5"
+          >
+            <div className="rounded-lg border border-white/30 bg-black/30 backdrop-blur-sm px-5 py-3 text-left">
+              <p className="text-xs uppercase tracking-wider text-gray-200">Check-In</p>
+              <p className="text-xl font-semibold text-white">2:00 PM</p>
+            </div>
+            <div className="rounded-lg border border-white/30 bg-black/30 backdrop-blur-sm px-5 py-3 text-left">
+              <p className="text-xs uppercase tracking-wider text-gray-200">Checkout</p>
+              <p className="text-xl font-semibold text-white">12:00 PM</p>
+            </div>
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.45 }}
+            className="max-w-3xl mx-auto text-sm md:text-base text-gray-200"
+          >
+            Discover tasteful and refined but casual and comfortable rooms and suites that suit your
+            needs and provide a work-from-home solution.
           </motion.p>
         </div>
       </section>
@@ -164,7 +190,7 @@ export function Rooms({ initialRooms = [] }: { initialRooms?: any[] }) {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
             {displayRooms.map((room: any, index: number) => (
               <RoomCard key={room.id} {...room} index={index} />
             ))}
