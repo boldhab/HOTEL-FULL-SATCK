@@ -97,12 +97,34 @@ const fallbackRooms = [
 ];
 
 const fallbackServices = [
-  { icon: Wifi, title: "Free WiFi", description: "High-speed internet access throughout the hotel" },
-  { icon: Utensils, title: "Fine Dining", description: "World-class restaurant serving international cuisine" },
-  { icon: Dumbbell, title: "Fitness Center", description: "State-of-the-art gym equipment and personal trainers" },
-  { icon: Sparkles, title: "Spa & Wellness", description: "Rejuvenating spa treatments and wellness programs" },
-  { icon: Car, title: "Valet Parking", description: "Complimentary valet parking for all guests" },
-  { icon: Clock, title: "24/7 Service", description: "Round-the-clock concierge and room service" },
+  {
+    icon: Wifi,
+    title: "Free High-Speed WiFi",
+    description:
+      "Stay connected with complimentary high-speed internet access throughout the hotel premises",
+    detailHref: "/services#services-other",
+  },
+  {
+    icon: Utensils,
+    title: "Fine Dining Restaurant",
+    description:
+      "World-class restaurant serving international and local cuisine prepared by expert chefs",
+    detailHref: "/services#services-restaurant",
+  },
+  {
+    icon: Users,
+    title: "Meeting Hall",
+    description:
+      "Modern meeting halls with flexible layouts for conferences, workshops, and business gatherings.",
+    detailHref: "/services#services-meeting",
+  },
+  {
+    icon: Calendar,
+    title: "Events",
+    description:
+      "Professional event hosting for weddings, celebrations, and corporate functions with dedicated coordination.",
+    detailHref: "/services#services-events",
+  },
 ];
 
 const defaultGallery = [
@@ -150,12 +172,22 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
     : defaultGallery;
 
   const iconMap: Record<string, any> = { 'Wifi': Wifi, 'Utensils': Utensils, 'Dumbbell': Dumbbell, 'Sparkles': Sparkles, 'Car': Car, 'Clock': Clock };
+  const serviceSectionLinkByTitle: Record<string, string> = {
+    "free high-speed wifi": "/services#services-other",
+    "fine dining restaurant": "/services#services-restaurant",
+    "meeting hall": "/services#services-meeting",
+    "events": "/services#services-events",
+  };
   
   const displayServices = initialData.services?.length > 0
     ? initialData.services.slice(0, 6).map((s: any) => ({
         icon: s.icon && iconMap[s.icon] ? iconMap[s.icon] : Sparkles,
         title: s.title,
-        description: s.description
+        description: s.description,
+        detailHref:
+          s.detailHref ||
+          serviceSectionLinkByTitle[String(s.title || "").trim().toLowerCase()] ||
+          "/services",
       }))
     : fallbackServices;
 
@@ -535,7 +567,7 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7">
             {displayServices.map((service: any, index: number) => (
               <ServiceCard key={service.title} {...service} index={index} />
             ))}
