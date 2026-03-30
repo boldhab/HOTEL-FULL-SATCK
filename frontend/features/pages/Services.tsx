@@ -1,8 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "motion/react";
-import { Wifi, Utensils, Dumbbell, Sparkles, Car, Clock, Wine, UtensilsCrossed, Waves, Users, Coffee, Shirt } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useState, useRef } from "react";
+import { 
+  Wifi, Utensils, Dumbbell, Sparkles, Car, Clock, Wine, 
+  UtensilsCrossed, Waves, Users, Coffee, Shirt, X, 
+  ArrowRight, Calendar, Star, Award, ChevronRight,
+  Phone, Mail, MapPin, ExternalLink, Heart, Check,
+  Shield, Gift, Globe, Camera, Music, Sun, Moon, Leaf
+} from "lucide-react";
 import { ServiceCard } from "@/components/features/ServiceCard";
 import { ImageWithFallback } from "@/components/media/ImageWithFallback";
 
@@ -13,40 +20,46 @@ const fallbackMainServices = [
     icon: Wifi,
     title: "Free High-Speed WiFi",
     description: "Stay connected with complimentary high-speed internet access throughout the hotel premises",
+    gradient: "from-blue-50 to-indigo-50",
   },
   {
     icon: Utensils,
     title: "Fine Dining Restaurant",
     description: "World-class restaurant serving international and local cuisine prepared by expert chefs",
+    gradient: "from-amber-50 to-orange-50",
   },
   {
     icon: Users,
     title: "Meeting Hall",
     description: "Modern meeting halls with flexible layouts for conferences, workshops, and business gatherings.",
+    gradient: "from-emerald-50 to-teal-50",
   },
   {
     icon: Sparkles,
     title: "Events",
     description: "Professional event hosting for weddings, celebrations, and corporate functions with dedicated coordination.",
-  }
+    gradient: "from-purple-50 to-pink-50",
+  },
 ];
 
 export function Services({ initialServices = [] }: { initialServices?: any[] }) {
+  const [showRestaurantDetails, setShowRestaurantDetails] = useState(false);
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const heroRef = useRef(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"]
+  });
+  
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
 
-  // We fallback to standard icons or just Sparkles
   const iconMap: Record<string, any> = {
-    'Wifi': Wifi,
-    'Utensils': Utensils,
-    'Dumbbell': Dumbbell,
-    'Sparkles': Sparkles,
-    'Car': Car,
-    'Clock': Clock,
-    'Wine': Wine,
-    'UtensilsCrossed': UtensilsCrossed,
-    'Waves': Waves,
-    'Users': Users,
-    'Coffee': Coffee,
-    'Shirt': Shirt,
+    'Wifi': Wifi, 'Utensils': Utensils, 'Dumbbell': Dumbbell,
+    'Sparkles': Sparkles, 'Car': Car, 'Clock': Clock, 'Wine': Wine,
+    'UtensilsCrossed': UtensilsCrossed, 'Waves': Waves, 'Users': Users,
+    'Coffee': Coffee, 'Shirt': Shirt,
   };
 
   const displayServices = initialServices.length > 0 ? initialServices.map((s) => ({
@@ -63,10 +76,10 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
   };
 
   const quickAccessLinks = [
-    { label: "Restaurant", href: "#services-restaurant" },
-    { label: "Meeting Halls", href: "#services-meeting" },
-    { label: "Weddings & Events", href: "#services-events" },
-    { label: "Amenities", href: "#services-other" },
+    { label: "Gourmet Dining", href: "#services-restaurant", icon: Utensils },
+    { label: "Meeting Halls", href: "#services-meeting", icon: Users },
+    { label: "Weddings & Events", href: "#services-events", icon: Sparkles },
+    { label: "Amenities", href: "#services-other", icon: Wifi },
   ];
 
   const dishPhotos = [
@@ -84,473 +97,717 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
   ];
 
   const amenityHighlights = [
-    {
-      icon: Wifi,
-      title: "Free Wi-Fi",
-      description: "Reliable internet coverage in rooms, lobby, and dining areas.",
-    },
-    {
-      icon: Car,
-      title: "Parking",
-      description: "Secure on-site parking for guests and event visitors.",
-    },
-    {
-      icon: Coffee,
-      title: "Room Service",
-      description: "Food and beverages available directly to your room.",
-    },
-    {
-      icon: Clock,
-      title: "24/7 Reception",
-      description: "Front desk support at any time for check-in and assistance.",
-    },
+    { icon: Wifi, title: "Free Wi-Fi", description: "Reliable internet coverage in rooms, lobby, and dining areas.", color: "text-blue-600" },
+    { icon: Car, title: "Secure Parking", description: "24/7 secure on-site parking for guests and event visitors.", color: "text-emerald-600" },
+    { icon: Coffee, title: "Premium Room Service", description: "Gourmet food and beverages available directly to your room.", color: "text-amber-600" },
+    { icon: Clock, title: "24/7 Concierge", description: "Dedicated front desk support at any time for all your needs.", color: "text-purple-600" },
+    { icon: Shield, title: "Security", description: "24-hour surveillance and security personnel ensuring your safety.", color: "text-red-600" },
+    { icon: Gift, title: "Welcome Amenities", description: "Personalized welcome gifts and complimentary refreshments.", color: "text-pink-600" },
+    { icon: Sun, title: "Rooftop Terrace", description: "Breathtaking city views from our exclusive rooftop lounge.", color: "text-orange-600" },
+    { icon: Leaf, title: "Eco-Friendly", description: "Sustainable practices and green initiatives throughout.", color: "text-green-600" },
   ];
 
   const meetingHallShowcase = [
     {
-      title: "ATSE ZERAYACOB MEETING HALL (አጼ ዘርዐያዕቆብ አዳራሽ)",
-      capacity: "Up to 150 persons with table",
-      description:
-        "Our largest and most elegant hall, ideal for congresses, major conferences, and large formal gatherings.",
-      image:
-        "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1000&q=80",
+      title: "Grand Ballroom",
+      capacity: "Up to 300 persons",
+      description: "Our magnificent ballroom featuring crystal chandeliers, advanced acoustics, and flexible configurations for grand celebrations and corporate galas.",
+      image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1000&q=80",
+      features: ["4K Projection", "Premium Sound System", "Stage Lighting", "Dance Floor"],
     },
     {
-      title: "AJIMA MEETING HALL (አጅማ አዳራሽ)",
-      capacity: "Up to 100 persons with table",
-      description:
-        "A balanced mid-size function hall designed for company programs, workshops, and professional events.",
-      image:
-        "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=80",
+      title: "Executive Conference Hall",
+      capacity: "Up to 120 persons",
+      description: "A sophisticated mid-size venue equipped with cutting-edge technology, ideal for corporate meetings, training sessions, and professional seminars.",
+      image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1000&q=80",
+      features: ["HD Video Wall", "Conference Mic System", "Whiteboard", "Breakout Rooms"],
     },
     {
-      title: "ELFEGNE MEETING HALL (እልፍኝ አዳራሽ)",
-      capacity: "Up to 50 persons with table",
-      description:
-        "A focused intimate hall for smaller meetings, board sessions, and private business discussions.",
-      image:
-        "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&w=1000&q=80",
+      title: "Boardroom Suite",
+      capacity: "Up to 25 persons",
+      description: "An exclusive, intimate setting for high-level board meetings, executive discussions, and private business negotiations.",
+      image: "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&w=1000&q=80",
+      features: ["Smart Board", "Video Conferencing", "Catering Service", "Privacy Screens"],
     },
   ];
 
+  const faqs = [
+    { q: "How quickly do you respond to event inquiries?", a: "Our dedicated events team responds within 30 minutes during business hours, ensuring your planning process moves forward smoothly." },
+    { q: "Can I customize menus for my event?", a: "Absolutely! Our executive chefs work closely with you to create personalized menus that reflect your taste and accommodate all dietary requirements." },
+    { q: "What AV equipment is provided?", a: "All meeting halls come equipped with state-of-the-art AV equipment including projectors, screens, sound systems, and complimentary high-speed WiFi." },
+    { q: "What's your cancellation policy?", a: "We offer flexible cancellation terms based on event size and lead time. Contact our events team for a personalized proposal." },
+  ];
+
+  const culinaryFeatures = [
+    { icon: Coffee, title: "Breakfast Buffet", description: "Extensive international breakfast spread" },
+    { icon: Wine, title: "Wine Cellar", description: "Curated selection of local and international wines" },
+    { icon: Utensils, title: "Live Stations", description: "Interactive cooking stations with expert chefs" },
+    { icon: Globe, title: "Global Cuisine", description: "Authentic dishes from around the world" },
+  ];
+
+  const eventStats = [
+    { value: "350+", label: "Events Hosted", icon: Calendar },
+    { value: "4.9/5", label: "Client Rating", icon: Star },
+    { value: "100%", label: "Satisfaction", icon: Heart },
+    { value: "15+", label: "Years Experience", icon: Award },
+  ];
+
   return (
-    <div className="pt-20">
-      {/* Hero Section */}
-      <section className="relative h-[50vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
+    <div className="overflow-x-hidden">
+      {/* Hero Section with Enhanced Parallax */}
+      <section ref={heroRef} className="relative h-[80vh] min-h-[700px] flex items-center justify-center overflow-hidden">
+        <motion.div 
+          className="absolute inset-0"
+          style={{ opacity: heroOpacity, scale: heroScale }}
+        >
           <ImageWithFallback
             src={heroImage}
             alt="Hotel Services"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/50" />
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
+        </motion.div>
 
-        <div className="relative z-10 text-center text-white px-4">
-          <motion.h1
+        <div className="relative z-10 text-center text-white px-4 max-w-5xl mx-auto">
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-4xl md:text-6xl font-serif mb-4"
           >
-            Services & Amenities
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
+            <motion.span 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring" }}
+              className="inline-block px-4 py-2 rounded-full bg-white/20 backdrop-blur-md text-sm font-medium mb-6 border border-white/30"
+            >
+              Excellence in Every Detail
+            </motion.span>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif mb-6 leading-tight">
+              Services & <span className="text-[#c9a961]">Amenities</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto leading-relaxed">
+              Where luxury meets functionality — every service thoughtfully curated for your comfort and delight
+            </p>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-xl text-gray-200"
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
           >
-            Everything you need for a perfect stay
-          </motion.p>
+            <Link
+              href="#services-overview"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#c9a961] hover:bg-[#b89851] rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+            >
+              <span className="font-semibold">Explore Services</span> 
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/contact"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-full transition-all duration-300 border border-white/50"
+            >
+              <span className="font-semibold">Contact Us</span>
+            </Link>
+          </motion.div>
         </div>
+        
+        {/* Enhanced Scroll Indicator */}
+        <motion.div 
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          animate={{ y: [0, 12, 0] }}
+          transition={{ repeat: Infinity, duration: 1.8 }}
+        >
+          <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
+            <motion.div 
+              className="w-1.5 h-2 bg-white rounded-full mt-2"
+              animate={{ y: [0, 12, 0] }}
+              transition={{ repeat: Infinity, duration: 1.8 }}
+            />
+          </div>
+        </motion.div>
       </section>
 
-      {/* Quick Jump */}
-      <section className="sticky top-20 z-20 border-y border-[#d9e2ec] bg-white/95 backdrop-blur">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex flex-wrap justify-center gap-2">
-            {quickAccessLinks.map((item) => (
-              <a
+      {/* Enhanced Quick Navigation */}
+      <section className="sticky top-20 z-30 bg-white/98 backdrop-blur-md border-b border-gray-200 shadow-md">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-wrap justify-center gap-3">
+            {quickAccessLinks.map((item, idx) => (
+              <motion.a
                 key={item.href}
                 href={item.href}
-                className="rounded-full border border-[#1e3a5f]/15 bg-[#f4f8fc] px-4 py-2 text-sm font-medium text-[#1e3a5f] transition-colors hover:bg-[#1e3a5f] hover:text-white"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="group relative flex items-center gap-2 rounded-full border border-gray-200 bg-white px-6 py-3 text-sm font-medium text-gray-700 transition-all duration-300 hover:border-[#c9a961] hover:bg-[#c9a961] hover:text-white hover:shadow-lg overflow-hidden"
               >
-                {item.label}
-              </a>
+                <span className="absolute inset-0 bg-gradient-to-r from-[#c9a961] to-[#e4c28e] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <item.icon className="relative z-10 w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="relative z-10">{item.label}</span>
+              </motion.a>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Main Services Grid */}
-      <section id="services-overview" className="scroll-mt-32 py-16 md:py-24 bg-white">
+      {/* Main Services Grid with Premium Cards */}
+      <section id="services-overview" className="scroll-mt-32 py-24 md:py-32 bg-gradient-to-b from-white via-gray-50 to-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">
-              Our Services
+            <motion.span 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              className="text-sm uppercase tracking-wider text-[#c9a961] font-semibold"
+            >
+              What We Offer
+            </motion.span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-[#1e3a5f] mb-4 mt-2">
+              Our Signature Services
             </h2>
-            <div className="w-20 h-1 bg-[#c9a961] mx-auto mb-4" />
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Comprehensive amenities designed to exceed your expectations
+            <div className="w-24 h-1 bg-gradient-to-r from-[#c9a961] to-[#e4c28e] mx-auto mb-6 rounded-full" />
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              Comprehensive amenities designed to exceed your expectations and create unforgettable experiences
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {displayServices.map((service: any, index: number) => (
-              <ServiceCard
+              <motion.div
                 key={service.title}
-                {...service}
-                detailHref={detailLinkByTitle[String(service.title || "").trim().toLowerCase()]}
-                index={index}
-              />
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <ServiceCard
+                  {...service}
+                  detailHref={detailLinkByTitle[String(service.title || "").trim().toLowerCase()]}
+                  index={index}
+                />
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Restaurant / Dining */}
-      <section id="services-restaurant" className="scroll-mt-32 py-16 md:py-24 bg-[#f8f8f8]">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-10 items-start">
-            <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">RESTAURANT &amp; BARS</h2>
-              <div className="w-20 h-1 bg-[#c9a961] mb-6" />
-              <div className="space-y-4 text-gray-700">
-                <p>
-                  Our Hotel brings the best of all the world&apos;s cuisine under one roof. Within bars and restaurants and cafe, you will never have to travel far to taste the best that Bernos has to offer.
+      {/* Enhanced Restaurant Section with Glassmorphism */}
+      <section id="services-restaurant" className="scroll-mt-32 py-24 md:py-32 bg-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-amber-100 via-orange-50 to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-amber-100 via-yellow-50 to-transparent rounded-full blur-3xl" />
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <span className="text-sm uppercase tracking-wider text-[#c9a961] font-semibold">Culinary Excellence</span>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-[#1e3a5f] mb-4 mt-2">
+                Restaurant & Bars
+              </h2>
+              <div className="w-20 h-1 bg-gradient-to-r from-[#c9a961] to-[#e4c28e] mb-6 rounded-full" />
+              
+              <div className="space-y-5 text-gray-700">
+                <p className="text-lg leading-relaxed">
+                  Experience culinary artistry at its finest. Our award-winning restaurant brings together global flavors and local traditions under one roof.
                 </p>
-                <p>
-                  In our restorant you get: Splendid breakfast buffet, freshly cut and prepared seasonal fruit, selection of cold meats and cheeses, hot zone with egg dishes to your liking, grilled vegetables, omelet, sausages, bread station, yoghurts, different juices, drinks station (soya drinks, skimmed milk, whole fat milk, sparkling water, still water, red wine, white wine, cava). We also have a coffee and tea station with express coffee.
-                </p>
-                <p>
-                  Serving both Ethiopian and International cuisine as well as classic cocktails and inventive new concoctions provides a great atmosphere for a relaxed drink with friends after a long day of sight-seeing, shopping or business meetings. Comfortable, spacious restaurant. The lineal organization of the buffet stations facilitates visibility and accessibility.
-                </p>
-              </div>
-
-              <div className="mt-5 bg-white rounded-xl border border-gray-200 p-5">
-                <h3 className="text-lg font-semibold text-[#1e3a5f] mb-3">Opening Hours</h3>
-                <p className="text-sm text-gray-700">
-                  Open From Sunday to Sunday: 7:00am to 11:00pm / Weekends and bank holidays: 7:00am to 11am
-                </p>
-                <p className="text-sm text-gray-700 mt-3">
-                  <span className="font-semibold text-[#1e3a5f]">NOTE:</span> Food and specific dishes for celiac and lactose non tolerant guests. Tell us when you make your booking.
-                </p>
-              </div>
-
-              <div className="mt-5 bg-white rounded-xl border border-gray-200 p-5">
-                <h3 className="text-lg font-semibold text-[#1e3a5f] mb-3">JANO BAR</h3>
-                <p className="text-sm text-gray-700 mb-4">
-                  Lounge bar with a wide range of drinks, cocktails, mixers... It also has a hot and cold snack food area, soups, salads, sandwiches, house specialties.
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {[
-                    { label: "TYPE OF CUISINE", value: "Snack food" },
-                    { label: "ATMOSPHERE", value: "modern" },
-                  ].map((item) => (
-                    <div key={item.label} className="rounded-lg border border-gray-200 bg-[#f8fbff] p-3">
-                      <p className="text-xs uppercase text-gray-500">{item.label}</p>
-                      <p className="text-sm font-semibold text-[#1e3a5f] mt-1">{item.value}</p>
+                <div className="grid grid-cols-2 gap-3 my-6">
+                  {culinaryFeatures.map((feature) => (
+                    <div key={feature.title} className="flex items-center gap-2 bg-gray-50 p-3 rounded-xl">
+                      <feature.icon className="w-5 h-5 text-[#c9a961]" />
+                      <div>
+                        <p className="text-sm font-semibold text-[#1e3a5f]">{feature.title}</p>
+                        <p className="text-xs text-gray-500">{feature.description}</p>
+                      </div>
                     </div>
                   ))}
                 </div>
-                <p className="text-sm text-gray-700 mt-4">
-                  <span className="font-semibold text-[#1e3a5f]">NOTE:</span> Relax watching your favorite sporting event, always in a fresh and stylish ambience.
-                </p>
-              </div>
-
-              <Link
-                href="/contact?subject=dining"
-                className="mt-5 inline-flex items-center justify-center px-6 py-3 bg-[#1e3a5f] hover:bg-[#16304f] text-white rounded-md transition-colors"
-              >
-                Inquire Restaurant &amp; Bars
-              </Link>
-            </motion.div>
-
-            <div className="grid grid-cols-2 gap-4">
-              {dishPhotos.map((src, index) => (
-                <motion.div
-                  key={src}
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.08 }}
-                  className={index === 0 ? "col-span-2" : ""}
-                >
-                  <ImageWithFallback
-                    src={src}
-                    alt="Dining service dish"
-                    className="h-52 w-full rounded-xl object-cover shadow-sm"
-                  />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Conference / Meeting */}
-      <section id="services-meeting" className="scroll-mt-32 py-16 md:py-24 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-10 rounded-2xl border border-[#dfe6ee] bg-gradient-to-r from-[#f5f8fc] to-white p-6 md:p-8">
-            <div className="grid lg:grid-cols-[1.3fr_1fr] gap-6 items-center">
-              <div>
-                <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-3">Our Meeting Hall</h2>
-                <div className="w-20 h-1 bg-[#c9a961] mb-4" />
-                <p className="text-gray-600">Three professional halls with efficient support for workshops, conferences, and corporate gatherings.</p>
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                {["150 PAX", "100 PAX", "50 PAX"].map((item) => (
-                  <div key={item} className="rounded-xl border border-[#d9e2ec] bg-white p-4 text-center shadow-sm">
-                    <p className="text-xs uppercase tracking-wide text-gray-500">Capacity</p>
-                    <p className="text-lg font-bold text-[#1e3a5f] mt-1">{item}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h3 className="text-2xl font-serif text-[#1e3a5f] mb-6 text-center">Meeting Halls Overview</h3>
-            <div className="grid md:grid-cols-3 gap-6">
-              {meetingHallShowcase.map((hall, index) => (
-                <motion.div
-                  key={hall.title}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.06 }}
-                  whileHover={{ y: -4 }}
-                  className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md"
-                >
-                  <ImageWithFallback
-                    src={hall.image}
-                    alt={hall.title}
-                    className="h-52 w-full object-cover"
-                  />
-                  <div className="p-5">
-                    <p className="text-[11px] uppercase tracking-wider text-gray-500 mb-2">Hall {String(index + 1).padStart(2, "0")}</p>
-                    <h4 className="font-semibold text-[#1e3a5f] mb-2 leading-snug">{hall.title}</h4>
-                    <span className="inline-flex items-center rounded-full bg-[#1e3a5f]/10 px-3 py-1 text-xs font-semibold text-[#1e3a5f] mb-3">
-                      {hall.capacity}
-                    </span>
-                    <p className="text-sm text-gray-600">{hall.description}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <div className="mt-8 rounded-xl border border-[#dfe6ee] bg-[#f8fbff] p-5 md:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <p className="text-sm md:text-base text-[#1e3a5f] font-medium">
-                Need help selecting the right hall for your event size and format?
-              </p>
-              <Link
-                href="/contact?subject=meeting"
-                className="inline-flex items-center justify-center px-6 py-3 bg-[#1e3a5f] hover:bg-[#16304f] text-white rounded-md transition-colors"
-              >
-                Book Meeting Hall
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Events */}
-      <section id="services-events" className="scroll-mt-32 py-16 md:py-24 bg-[#f8f8f8]">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">Weddings & Events</h2>
-            <div className="w-20 h-1 bg-[#c9a961] mx-auto mb-4" />
-            <p className="text-gray-600 max-w-4xl mx-auto">
-              Ethio-Bernos Hotel offers personalized wedding and event experiences with elegant venues, chef-led catering, dedicated coordination, and comfortable guest accommodations.
-            </p>
-          </motion.div>
-
-          <div className="grid lg:grid-cols-[1.05fr_1fr] gap-8 items-start">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="rounded-2xl border border-[#dfe6ee] bg-white p-6 md:p-7 shadow-sm"
-            >
-              <p className="text-xs uppercase tracking-[0.16em] text-[#1e3a5f]/70 mb-2">Event Services</p>
-              <h3 className="text-xl md:text-2xl font-serif text-[#1e3a5f] mb-5">Why Celebrate With Us</h3>
-              <h4 className="text-sm font-semibold text-[#1e3a5f] mb-3">What You Get</h4>
-              <div className="space-y-3">
-                {[
-                  "Private and beautifully decorated event spaces",
-                  "Chef-led catering with custom menu planning",
-                  "Dedicated event coordinator from planning to closing",
-                  "Elegant venues for rehearsal dinners and receptions",
-                  "Comfortable guest accommodations for families and groups",
-                ].map((point) => (
-                  <div key={point} className="flex items-start gap-3">
-                    <span className="mt-2 h-2 w-2 rounded-full bg-[#c9a961] flex-shrink-0" />
-                    <p className="text-sm text-gray-700">{point}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-6 grid sm:grid-cols-2 gap-4">
-                <div className="rounded-xl bg-[#f8fbff] border border-[#dfe6ee] p-4">
-                  <h4 className="text-sm font-semibold text-[#1e3a5f] mb-2">Ideal For</h4>
-                  <p className="text-sm text-gray-700">Weddings, honeymoons, rehearsal dinners, receptions, and private celebrations.</p>
-                </div>
-                <div className="rounded-xl bg-[#f8fbff] border border-[#dfe6ee] p-4">
-                  <h4 className="text-sm font-semibold text-[#1e3a5f] mb-2">Planning Process</h4>
-                  <p className="text-sm text-gray-700">Consultation, customization, execution, and on-site coordination from start to finish.</p>
+                <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-2xl border-l-4 border-[#c9a961] shadow-lg">
+                  <p className="italic text-gray-700">
+                    "Serving both Ethiopian and International cuisine with classic cocktails and inventive concoctions in an elegant atmosphere perfect for any occasion."
+                  </p>
+                  <p className="mt-3 text-sm font-semibold text-[#c9a961]">— Executive Chef</p>
                 </div>
               </div>
 
-              <div className="mt-6 rounded-xl bg-[#f3f7fb] border border-[#d7e2ef] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <p className="text-sm text-[#1e3a5f] font-medium">
-                  Let our team craft a personalized event experience that reflects your style and expectations.
-                </p>
+              <div className="flex flex-wrap gap-4 mt-8">
+                <button
+                  type="button"
+                  onClick={() => setShowRestaurantDetails(true)}
+                  className="group inline-flex items-center gap-2 px-8 py-3 bg-[#c9a961] hover:bg-[#b89851] text-white rounded-full transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-xl"
+                >
+                  <span>View Details</span> 
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
                 <Link
-                  href="/contact?subject=event"
-                  className="inline-flex items-center justify-center px-6 py-3 bg-[#1e3a5f] hover:bg-[#16304f] text-white rounded-md transition-colors"
+                  href="/contact?subject=dining"
+                  className="inline-flex items-center gap-2 px-8 py-3 border-2 border-[#1e3a5f] text-[#1e3a5f] hover:bg-[#1e3a5f] hover:text-white rounded-full transition-all duration-300"
                 >
-                  Plan Your Event
+                  Make a Reservation
                 </Link>
               </div>
             </motion.div>
 
-            <div className="grid md:grid-cols-2 gap-5">
-              {eventGallery.map((src, index) => (
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="grid grid-cols-2 gap-4"
+            >
+              {dishPhotos.map((src, index) => (
                 <motion.div
                   key={src}
-                  initial={{ opacity: 0, scale: 0.97 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.08 }}
-                  className={index === 0 ? "md:col-span-2" : ""}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
+                  className={`${index === 0 ? "col-span-2" : ""} overflow-hidden rounded-2xl shadow-xl group`}
                 >
-                  <ImageWithFallback src={src} alt="Past event at Ethio Bernos" className="h-56 w-full rounded-xl object-cover shadow-sm" />
+                  <ImageWithFallback
+                    src={src}
+                    alt="Dining service dish"
+                    className="h-56 w-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </motion.div>
               ))}
-            </div>
-          </div>
-
-          <div className="mt-8 grid sm:grid-cols-3 gap-4">
-            {[
-              { label: "Events Hosted", value: "250+" },
-              { label: "Guest Satisfaction", value: "4.8/5" },
-              { label: "Planner Support", value: "Dedicated Team" },
-            ].map((metric) => (
-              <div key={metric.label} className="rounded-xl border border-[#dfe6ee] bg-white p-4 text-center shadow-sm">
-                <p className="text-xs uppercase text-gray-500">{metric.label}</p>
-                <p className="text-lg font-bold text-[#1e3a5f] mt-1">{metric.value}</p>
-              </div>
-            ))}
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Basic Amenities */}
-      <section id="services-other" className="scroll-mt-32 py-16 md:py-24 bg-white">
+      {/* Premium Meeting Halls Section */}
+      <section id="services-meeting" className="scroll-mt-32 py-24 md:py-32 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">Basic Amenities</h2>
-            <div className="w-20 h-1 bg-[#c9a961] mx-auto mb-4" />
-            <p className="text-gray-600 max-w-2xl mx-auto">Essential services that make every stay smooth, comfortable, and connected.</p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <span className="text-sm uppercase tracking-wider text-[#c9a961] font-semibold">Professional Spaces</span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-[#1e3a5f] mb-4 mt-2">
+              Premier Meeting Halls
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-[#c9a961] to-[#e4c28e] mx-auto mb-6 rounded-full" />
+            <p className="text-gray-600 max-w-3xl mx-auto text-lg">
+              Three versatile venues equipped with cutting-edge technology and supported by our dedicated events team for flawless execution
+            </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {amenityHighlights.map((amenity, index) => (
+          <div className="grid md:grid-cols-3 gap-8">
+            {meetingHallShowcase.map((hall, index) => (
               <motion.div
-                key={amenity.title}
-                initial={{ opacity: 0, y: 18 }}
+                key={hall.title}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.08 }}
-                whileHover={{ y: -6 }}
-                className="rounded-xl border border-gray-200 p-5 bg-gradient-to-b from-white to-gray-50 shadow-sm hover:shadow-md transition-all"
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -8 }}
+                className="group overflow-hidden rounded-2xl bg-white shadow-xl hover:shadow-2xl transition-all duration-300"
               >
-                <div className="h-10 w-10 rounded-full bg-[#1e3a5f]/10 flex items-center justify-center mb-3">
-                  <amenity.icon className="h-5 w-5 text-[#1e3a5f]" />
+                <div className="relative h-72 overflow-hidden">
+                  <ImageWithFallback
+                    src={hall.image}
+                    alt={hall.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <p className="text-sm font-semibold">{hall.capacity}</p>
+                  </div>
+                  <div className="absolute top-4 right-4 bg-[#c9a961] text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    Premium
+                  </div>
                 </div>
-                <h3 className="font-semibold text-[#1e3a5f] mb-2">{amenity.title}</h3>
-                <p className="text-sm text-gray-600">{amenity.description}</p>
+                <div className="p-6">
+                  <h3 className="text-xl font-serif text-[#1e3a5f] mb-2">{hall.title}</h3>
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">{hall.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {hall.features.map((feature) => (
+                      <span key={feature} className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
-          <div className="mt-8 flex justify-center">
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-12 rounded-2xl bg-gradient-to-r from-[#1e3a5f] via-[#2c4e7a] to-[#1e3a5f] p-8 text-center shadow-xl"
+          >
+            <p className="text-white text-xl mb-4 font-semibold">Need assistance selecting the perfect venue?</p>
             <Link
-              href="/contact?subject=amenities"
-              className="inline-flex items-center justify-center px-6 py-3 bg-[#1e3a5f] hover:bg-[#16304f] text-white rounded-md transition-colors"
+              href="/contact?subject=meeting"
+              className="inline-flex items-center gap-2 px-8 py-3 bg-[#c9a961] hover:bg-[#b89851] text-white rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
-              Ask About Amenities
+              Book a Consultation <ChevronRight className="w-4 h-4" />
             </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Enhanced Events Section with Stats */}
+      <section id="services-events" className="scroll-mt-32 py-24 md:py-32 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <span className="text-sm uppercase tracking-wider text-[#c9a961] font-semibold">Celebrate in Style</span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-[#1e3a5f] mb-4 mt-2">
+              Weddings & Events
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-[#c9a961] to-[#e4c28e] mx-auto mb-6 rounded-full" />
+            <p className="text-gray-600 max-w-3xl mx-auto text-lg">
+              Create unforgettable memories with our bespoke event planning, elegant venues, and exceptional service
+            </p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="space-y-6"
+            >
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                {eventStats.map((stat, idx) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    transition={{ delay: idx * 0.1, type: "spring" }}
+                    className="text-center p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 hover:shadow-lg transition-shadow"
+                  >
+                    <stat.icon className="w-6 h-6 text-[#c9a961] mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-[#1e3a5f]">{stat.value}</p>
+                    <p className="text-xs text-gray-600">{stat.label}</p>
+                  </motion.div>
+                ))}
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-2xl font-serif text-[#1e3a5f]">Why Choose Us</h3>
+                <div className="space-y-3">
+                  {[
+                    "Breathtaking venues with customizable layouts",
+                    "Award-winning culinary team creating bespoke menus",
+                    "Dedicated wedding and event coordinators",
+                    "State-of-the-art lighting and sound systems",
+                    "Luxury accommodation packages for guests",
+                    "Comprehensive photography and videography services",
+                  ].map((point) => (
+                    <motion.div 
+                      key={point} 
+                      className="flex items-start gap-3 group"
+                      whileHover={{ x: 5 }}
+                    >
+                      <div className="mt-1 w-5 h-5 rounded-full bg-[#c9a961] flex items-center justify-center flex-shrink-0">
+                        <Check className="w-3 h-3 text-white" />
+                      </div>
+                      <p className="text-gray-700 group-hover:text-[#1e3a5f] transition-colors">{point}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              <Link
+                href="/contact?subject=event"
+                className="inline-flex items-center gap-2 px-8 py-3 bg-[#1e3a5f] hover:bg-[#16304f] text-white rounded-full transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-xl"
+              >
+                Plan Your Event <ArrowRight className="w-4 h-4" />
+              </Link>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="grid grid-cols-2 gap-4"
+            >
+              {eventGallery.map((src, index) => (
+                <motion.div
+                  key={src}
+                  whileHover={{ scale: 1.05 }}
+                  className={`${index === 0 ? "col-span-2" : ""} overflow-hidden rounded-2xl shadow-xl group`}
+                >
+                  <ImageWithFallback
+                    src={src}
+                    alt="Past event at Ethio Bernos"
+                    className="h-64 w-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="py-16 md:py-20 bg-[#f8f8f8]">
+      {/* Premium Amenities Grid */}
+      <section id="services-other" className="scroll-mt-32 py-24 md:py-32 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">Service FAQ</h2>
-            <div className="w-20 h-1 bg-[#c9a961] mx-auto mb-4" />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <span className="text-sm uppercase tracking-wider text-[#c9a961] font-semibold">Essential Comforts</span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-[#1e3a5f] mb-4 mt-2">
+              Premium Amenities
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-[#c9a961] to-[#e4c28e] mx-auto mb-6 rounded-full" />
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              Experience unparalleled comfort with our carefully curated selection of premium amenities
+            </p>
           </motion.div>
-          <div className="max-w-4xl mx-auto space-y-4">
-            {[
-              {
-                q: "How fast do you respond to event and meeting inquiries?",
-                a: "Our team typically responds within 1 business hour during working time.",
-              },
-              {
-                q: "Can I request custom menu options for events?",
-                a: "Yes. Our chefs prepare customized menu plans for meetings, weddings, and private events.",
-              },
-              {
-                q: "Do you provide setup support for meetings and conferences?",
-                a: "Yes. We support layout setup, AV/IT assistance, and on-site coordination.",
-              },
-              {
-                q: "What is your cancellation policy for service bookings?",
-                a: "Cancellation terms depend on event size and package. Contact us for the exact policy.",
-              },
-            ].map((item) => (
-              <div key={item.q} className="rounded-xl border border-gray-200 bg-white p-5">
-                <h3 className="font-semibold text-[#1e3a5f] mb-2">{item.q}</h3>
-                <p className="text-sm text-gray-600">{item.a}</p>
-              </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {amenityHighlights.map((amenity, index) => (
+              <motion.div
+                key={amenity.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.05 }}
+                whileHover={{ y: -8 }}
+                className="group relative p-6 rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-[#c9a961]/0 to-[#c9a961]/0 group-hover:from-[#c9a961]/5 group-hover:to-[#c9a961]/10 transition-all duration-300" />
+                <div className="relative">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#1e3a5f] to-[#2c4e7a] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <amenity.icon className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-[#1e3a5f] mb-2">{amenity.title}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">{amenity.description}</p>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-[#1e3a5f] text-white">
+      {/* Enhanced FAQ Section with Better Styling */}
+      <section className="py-24 md:py-32 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <span className="text-sm uppercase tracking-wider text-[#c9a961] font-semibold">Common Questions</span>
+            <h2 className="text-4xl md:text-5xl font-serif text-[#1e3a5f] mb-4 mt-2">
+              Frequently Asked Questions
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-[#c9a961] to-[#e4c28e] mx-auto rounded-full" />
+          </motion.div>
+
+          <div className="max-w-3xl mx-auto space-y-4">
+            {faqs.map((item, index) => (
+              <motion.div
+                key={item.q}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300"
+              >
+                <button
+                  onClick={() => setActiveFaq(activeFaq === index ? null : index)}
+                  className="w-full px-6 py-5 flex justify-between items-center text-left bg-white hover:bg-gray-50 transition-colors"
+                >
+                  <span className="font-semibold text-[#1e3a5f] text-lg">{item.q}</span>
+                  <motion.div
+                    animate={{ rotate: activeFaq === index ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-8 h-8 rounded-full bg-[#c9a961]/10 flex items-center justify-center"
+                  >
+                    <ChevronRight className="w-5 h-5 text-[#c9a961]" />
+                  </motion.div>
+                </button>
+                <motion.div
+                  initial={false}
+                  animate={{ height: activeFaq === index ? "auto" : 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-6 pb-5 text-gray-600 leading-relaxed border-t border-gray-100 bg-gray-50/50">
+                    {item.a}
+                  </div>
+                </motion.div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Enhanced CTA Section with Parallax */}
+      <section className="relative py-28 md:py-36 overflow-hidden">
+        <div className="absolute inset-0">
+          <ImageWithFallback
+            src={heroImage}
+            alt="Background"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1e3a5f]/95 via-[#1e3a5f]/90 to-[#1e3a5f]/95" />
+        </div>
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="max-w-4xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl md:text-4xl font-serif mb-4">
-                Experience Our Services
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white mb-4">
+                Ready to Experience Excellence?
               </h2>
-              <div className="w-20 h-1 bg-[#c9a961] mx-auto mb-6" />
-              <p className="text-gray-300 mb-8">
-                Book your stay today and enjoy all our world-class amenities and services
+              <div className="w-24 h-1 bg-[#c9a961] mx-auto mb-6 rounded-full" />
+              <p className="text-gray-200 text-lg mb-10 leading-relaxed">
+                Book your stay today and immerse yourself in our world-class amenities and services. 
+                Let us craft an unforgettable experience tailored just for you.
               </p>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center px-8 py-3 bg-[#c9a961] hover:bg-[#b89851] text-white rounded-md transition-colors"
-              >
-                Book Now
-              </Link>
+              <div className="flex flex-wrap gap-4 justify-center">
+                <Link
+                  href="/contact"
+                  className="group inline-flex items-center gap-2 px-8 py-4 bg-[#c9a961] hover:bg-[#b89851] text-white rounded-full transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl"
+                >
+                  <span className="font-semibold">Book Now</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  href="/contact"
+                  className="group inline-flex items-center gap-2 px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-[#1e3a5f] rounded-full transition-all duration-300"
+                >
+                  <span className="font-semibold">Contact Us</span>
+                </Link>
+              </div>
             </motion.div>
           </div>
         </div>
       </section>
+
+      {/* Enhanced Restaurant Details Modal with Better Design */}
+      {showRestaurantDetails && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Restaurant details"
+        >
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={() => setShowRestaurantDetails(false)}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl"
+          >
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-start justify-between rounded-t-2xl">
+              <div>
+                <h3 className="text-2xl md:text-3xl font-serif text-[#1e3a5f]">Restaurant & Bars</h3>
+                <p className="text-sm text-gray-500 mt-1">Culinary Excellence at Your Service</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowRestaurantDetails(false)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+              >
+                <X className="h-5 w-5 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-2 gap-3">
+                {dishPhotos.slice(0, 4).map((src, index) => (
+                  <div key={src} className={index === 0 ? "col-span-2" : ""}>
+                    <ImageWithFallback
+                      src={src}
+                      alt="Restaurant detail"
+                      className="h-48 w-full rounded-xl object-cover shadow-md"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 space-y-4">
+                <h4 className="text-xl font-semibold text-[#1e3a5f] flex items-center gap-2">
+                  <Utensils className="w-5 h-5 text-[#c9a961]" />
+                  Dining Experience
+                </h4>
+                <p className="text-gray-700 leading-relaxed">
+                  Our Hotel brings the best of the world's cuisine under one roof. Within bars and restaurants and cafe, you will never have to travel far to taste the best that Bernos has to offer.
+                </p>
+                <p className="text-gray-700 leading-relaxed">
+                  In our restaurant you get: Splendid breakfast buffet, freshly cut and prepared seasonal fruit, selection of cold meats and cheeses, hot zone with egg dishes to your liking, grilled vegetables, omelet, sausages, bread station, yoghurts, different juices, drinks station, coffee and tea station with express coffee.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-6">
+                  <h4 className="text-lg font-semibold text-[#1e3a5f] mb-3 flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-[#c9a961]" />
+                    Opening Hours
+                  </h4>
+                  <p className="text-sm text-gray-700">
+                    <span className="font-semibold">Daily:</span> 7:00 AM - 11:00 PM
+                  </p>
+                  <p className="text-sm text-gray-700 mt-2">
+                    <span className="font-semibold">Weekends & Holidays:</span> 7:00 AM - 11:00 PM
+                  </p>
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="text-xs text-gray-600">
+                      <span className="font-semibold text-[#1e3a5f]">Note:</span> Special dietary accommodations available upon request
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
+                  <h4 className="text-lg font-semibold text-[#1e3a5f] mb-3 flex items-center gap-2">
+                    <Wine className="w-4 h-4 text-[#c9a961]" />
+                    Jano Bar
+                  </h4>
+                  <p className="text-sm text-gray-700 mb-4">
+                    Lounge bar with a wide range of drinks, cocktails, mixers... It also has a hot and cold snack food area, soups, salads, sandwiches, house specialties.
+                  </p>
+                  <div className="space-y-2">
+                    <div className="bg-white rounded-lg p-3">
+                      <p className="text-xs uppercase text-gray-500">Type of Cuisine</p>
+                      <p className="text-sm font-semibold text-[#1e3a5f]">Snack Food & Cocktails</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-3">
+                      <p className="text-xs uppercase text-gray-500">Atmosphere</p>
+                      <p className="text-sm font-semibold text-[#1e3a5f]">Modern & Relaxed</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-600 mt-4 pt-3 border-t border-gray-200">
+                    <span className="font-semibold text-[#1e3a5f]">Note:</span> Enjoy live sports events in a fresh and stylish ambience
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
