@@ -69,17 +69,12 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
     { label: "Amenities", href: "#services-other" },
   ];
 
-  const menuPreview = [
-    { name: "Doro Wat", description: "Traditional Ethiopian chicken stew with injera", price: "ETB 420" },
-    { name: "Tibs", description: "Sizzling beef cubes with rosemary and onions", price: "ETB 520" },
-    { name: "Grilled Nile Perch", description: "Pan-seared fish with lemon herb sauce", price: "ETB 640" },
-    { name: "Pasta Alfredo", description: "Creamy pasta with mushrooms and parmesan", price: "ETB 460" },
-  ];
-
   const dishPhotos = [
-    "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80",
+    "/images/restorant_food1.png",
+    "/images/restourant_food2.png",
+    "/images/about_restorants.png",
+    "/images/about_restorant.png",
+    "/images/about_cafes.png",
   ];
 
   const eventGallery = [
@@ -224,42 +219,56 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-10 items-start">
             <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">Restaurant / Dining</h2>
+              <h2 className="text-3xl md:text-4xl font-serif text-[#1e3a5f] mb-4">RESTAURANT &amp; BARS</h2>
               <div className="w-20 h-1 bg-[#c9a961] mb-6" />
-              <p className="text-gray-600 mb-6">Ethiopian and international dining in a refined, comfortable setting.</p>
-              <div className="bg-white rounded-xl border border-gray-200 p-5">
-                <h3 className="text-lg font-semibold text-[#1e3a5f] mb-4">Menu Preview</h3>
-                <div className="space-y-3">
-                  {menuPreview.map((item) => (
-                    <div key={item.name} className="flex items-start justify-between gap-4 border-b border-gray-100 pb-3 last:border-b-0">
-                      <div>
-                        <p className="font-medium text-gray-800">{item.name}</p>
-                        <p className="text-sm text-gray-500">{item.description}</p>
-                      </div>
-                      <p className="text-sm font-semibold text-[#1e3a5f]">{item.price}</p>
+              <div className="space-y-4 text-gray-700">
+                <p>
+                  Our Hotel brings the best of all the world&apos;s cuisine under one roof. Within bars and restaurants and cafe, you will never have to travel far to taste the best that Bernos has to offer.
+                </p>
+                <p>
+                  In our restorant you get: Splendid breakfast buffet, freshly cut and prepared seasonal fruit, selection of cold meats and cheeses, hot zone with egg dishes to your liking, grilled vegetables, omelet, sausages, bread station, yoghurts, different juices, drinks station (soya drinks, skimmed milk, whole fat milk, sparkling water, still water, red wine, white wine, cava). We also have a coffee and tea station with express coffee.
+                </p>
+                <p>
+                  Serving both Ethiopian and International cuisine as well as classic cocktails and inventive new concoctions provides a great atmosphere for a relaxed drink with friends after a long day of sight-seeing, shopping or business meetings. Comfortable, spacious restaurant. The lineal organization of the buffet stations facilitates visibility and accessibility.
+                </p>
+              </div>
+
+              <div className="mt-5 bg-white rounded-xl border border-gray-200 p-5">
+                <h3 className="text-lg font-semibold text-[#1e3a5f] mb-3">Opening Hours</h3>
+                <p className="text-sm text-gray-700">
+                  Open From Sunday to Sunday: 7:00am to 11:00pm / Weekends and bank holidays: 7:00am to 11am
+                </p>
+                <p className="text-sm text-gray-700 mt-3">
+                  <span className="font-semibold text-[#1e3a5f]">NOTE:</span> Food and specific dishes for celiac and lactose non tolerant guests. Tell us when you make your booking.
+                </p>
+              </div>
+
+              <div className="mt-5 bg-white rounded-xl border border-gray-200 p-5">
+                <h3 className="text-lg font-semibold text-[#1e3a5f] mb-3">JANO BAR</h3>
+                <p className="text-sm text-gray-700 mb-4">
+                  Lounge bar with a wide range of drinks, cocktails, mixers... It also has a hot and cold snack food area, soups, salads, sandwiches, house specialties.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {[
+                    { label: "TYPE OF CUISINE", value: "Snack food" },
+                    { label: "ATMOSPHERE", value: "modern" },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-lg border border-gray-200 bg-[#f8fbff] p-3">
+                      <p className="text-xs uppercase text-gray-500">{item.label}</p>
+                      <p className="text-sm font-semibold text-[#1e3a5f] mt-1">{item.value}</p>
                     </div>
                   ))}
                 </div>
+                <p className="text-sm text-gray-700 mt-4">
+                  <span className="font-semibold text-[#1e3a5f]">NOTE:</span> Relax watching your favorite sporting event, always in a fresh and stylish ambience.
+                </p>
               </div>
-              <div className="mt-4 inline-flex items-center rounded-full bg-[#1e3a5f] px-4 py-2 text-sm text-white">
-                Open Hours: 6:30 AM - 11:00 PM
-              </div>
-              <div className="mt-5 grid grid-cols-2 gap-3 max-w-md">
-                {[
-                  { label: "Cuisine", value: "Ethiopian + International" },
-                  { label: "Response Time", value: "Within 1 hour" },
-                ].map((item) => (
-                  <div key={item.label} className="rounded-lg border border-gray-200 bg-white p-3">
-                    <p className="text-xs uppercase text-gray-500">{item.label}</p>
-                    <p className="text-sm font-semibold text-[#1e3a5f] mt-1">{item.value}</p>
-                  </div>
-                ))}
-              </div>
+
               <Link
                 href="/contact?subject=dining"
                 className="mt-5 inline-flex items-center justify-center px-6 py-3 bg-[#1e3a5f] hover:bg-[#16304f] text-white rounded-md transition-colors"
               >
-                Inquire Dining
+                Inquire Restaurant &amp; Bars
               </Link>
             </motion.div>
 
