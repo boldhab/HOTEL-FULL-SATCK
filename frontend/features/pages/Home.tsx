@@ -13,7 +13,7 @@ import { ServiceCard } from "@/components/features/ServiceCard";
 import { ImageWithFallback } from "@/components/media/ImageWithFallback";
 import { useState, useEffect, useRef } from "react";
 
-const heroImage = "/images/service_hero.png";
+const heroImage = "/images/service_hero1.png";
 const aboutImage = "/images/overview_gallery4.png";
 
 const fallbackRooms = [
