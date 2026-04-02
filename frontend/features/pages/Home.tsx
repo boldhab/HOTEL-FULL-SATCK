@@ -209,6 +209,7 @@ const defaultGallery = [
   "/images/overview_gallery3.png",
   "/images/overview_gallery4.png",
 ];
+const HOME_ROOM_LIMIT = 4;
 
 export function Home({ initialData = { rooms: [], gallery: [], services: [] } }: { initialData?: any }) {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -218,14 +219,14 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
-  const roomRecords = Array.isArray(initialData.rooms) ? initialData.rooms.slice(0, 6) : [];
+  const roomRecords = Array.isArray(initialData.rooms) ? initialData.rooms.slice(0, HOME_ROOM_LIMIT) : [];
   const hasUsableRoomData = roomRecords.some((r: any) => {
     if (!r || typeof r !== "object") return false;
     return Boolean(r.name || r.description || r.price || r.capacity || (Array.isArray(r.images) && r.images.length > 0));
   });
 
   const displayRooms = hasUsableRoomData
-    ? fallbackRooms.map((fallbackRoom, index) => {
+    ? fallbackRooms.slice(0, HOME_ROOM_LIMIT).map((fallbackRoom, index) => {
         const r = roomRecords[index];
         if (!r || typeof r !== "object") {
           return fallbackRoom;
