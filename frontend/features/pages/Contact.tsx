@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/actions/button";
 import { ImageWithFallback } from "@/components/media/ImageWithFallback";
 import { apiClient } from "@/lib/api";
 
-const heroImage = "https://images.unsplash.com/photo-1759038085950-1234ca8f5fed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMHJlY2VwdGlvbiUyMGRlc2slMjBjb25jaWVyZ2V8ZW58MXx8fHwxNzczOTI1Mjk5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
+const heroImage = "/images/contact_hero.png";
 
 export function Contact() {
   const [formData, setFormData] = useState({

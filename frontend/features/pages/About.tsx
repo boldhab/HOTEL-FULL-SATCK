@@ -6,6 +6,7 @@ import { ImageWithFallback } from "@/components/media/ImageWithFallback";
 import { useRef } from "react";
 
 const hotelImage = "/images/about_hotel.png";
+const hotelImage_hero = "/images/about_hotels.png";
 const cafesImage = "/images/about_cafes.png";
 const restourantsImage = "/images/about_restorant.png";
 const restourantsImage1 = "/images/about_restorants.png";
@@ -26,7 +27,7 @@ export function About() {
       <section ref={targetRef} className="relative h-[38vh] md:h-[44vh] flex items-center justify-center overflow-hidden">
         <motion.div className="absolute inset-0" style={{ scale }}>
           <ImageWithFallback
-            src={hotelImage}
+            src={hotelImage_hero}
             alt="Ethio Bernos Hotel"
             className="w-full h-full object-cover"
             priority
