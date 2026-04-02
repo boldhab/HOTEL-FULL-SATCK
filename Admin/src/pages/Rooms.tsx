@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useMemo, useState } from 'react';
-import type { ChangeEvent, FormEvent } from 'react';
+import type { ChangeEvent, Dispatch, FormEvent, SetStateAction } from 'react';
 import {
   Plus,
   Pencil,
@@ -12,6 +12,8 @@ import {
   Building2,
   Tag,
   X,
+  ArrowUp,
+  ArrowDown,
 } from 'lucide-react';
 import api from '../services/api';
 
@@ -36,7 +38,12 @@ type RoomForm = {
   description: string;
   price: string;
   capacity: string;
+  status: RoomStatus;
+  amenitiesText: string;
 };
+
+const defaultAmenities = ['Free WiFi', 'Smart TV', 'Rain Shower'];
+const roomStatusOptions: RoomStatus[] = ['available', 'occupied', 'maintenance', 'booked'];
 
 const initialForm: RoomForm = {
   name: '',
@@ -44,9 +51,33 @@ const initialForm: RoomForm = {
   description: '',
   price: '',
   capacity: '2',
+  status: 'available',
+  amenitiesText: defaultAmenities.join(', '),
 };
 
-const defaultAmenities = ['Free WiFi', 'Smart TV', 'Rain Shower'];
+const parseAmenitiesInput = (value: string) => {
+  const items = value
+    .split(/[\n,]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+  return Array.from(new Set(items));
+};
+
+const isRoomStatus = (value: unknown): value is RoomStatus =>
+  typeof value === 'string' && roomStatusOptions.includes(value as RoomStatus);
+
+const normalizeRoom = (room: Partial<Room>): Room => ({
+  id: String(room.id || ''),
+  name: String(room.name || 'Untitled Room'),
+  type: String(room.type || 'Standard'),
+  description: String(room.description || ''),
+  price: typeof room.price === 'number' ? room.price : Number(room.price || 0),
+  capacity: typeof room.capacity === 'number' ? room.capacity : Number(room.capacity || 0),
+  images: Array.isArray(room.images) ? room.images : [],
+  status: isRoomStatus(room.status) ? room.status : 'available',
+  amenities: Array.isArray(room.amenities) && room.amenities.length > 0 ? room.amenities : defaultAmenities,
+  createdAt: room.createdAt,
+});
 
 const Rooms = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -60,9 +91,18 @@ const Rooms = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+
   const [form, setForm] = useState<RoomForm>(initialForm);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
+
+  const [editForm, setEditForm] = useState<RoomForm>(initialForm);
+  const [editFiles, setEditFiles] = useState<File[]>([]);
+  const [updating, setUpdating] = useState(false);
+
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -71,19 +111,7 @@ const Rooms = () => {
         setLoading(true);
         const response = await api.get('/rooms');
         const data = Array.isArray(response.data?.data) ? response.data.data : [];
-        const normalized = data.map((room: Partial<Room>) => ({
-          id: String(room.id || ''),
-          name: String(room.name || 'Untitled Room'),
-          type: String(room.type || 'Standard'),
-          description: String(room.description || ''),
-          price: typeof room.price === 'number' ? room.price : Number(room.price || 0),
-          capacity: typeof room.capacity === 'number' ? room.capacity : Number(room.capacity || 0),
-          images: Array.isArray(room.images) ? room.images : [],
-          status: 'available' as RoomStatus,
-          amenities: Array.isArray(room.amenities) && room.amenities.length > 0 ? room.amenities : defaultAmenities,
-          createdAt: room.createdAt,
-        }));
-        setRooms(normalized);
+        setRooms(data.map((room: Partial<Room>) => normalizeRoom(room)));
         setError(null);
       } catch {
         setError('Rooms could not be loaded right now.');
@@ -164,7 +192,10 @@ const Rooms = () => {
     }
   };
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    fileSetter: Dispatch<SetStateAction<File[]>>
+  ) => {
     const files = Array.from(event.target.files || []);
     if (files.length > 5) {
       setError('You can upload up to 5 images per room.');
@@ -177,13 +208,42 @@ const Rooms = () => {
       return;
     }
 
-    setSelectedFiles(files);
+    fileSetter(files);
     setError(null);
+  };
+
+  const moveFile = (
+    index: number,
+    direction: 'up' | 'down',
+    fileSetter: Dispatch<SetStateAction<File[]>>
+  ) => {
+    fileSetter((current) => {
+      const targetIndex = direction === 'up' ? index - 1 : index + 1;
+      if (targetIndex < 0 || targetIndex >= current.length) {
+        return current;
+      }
+      const next = [...current];
+      const temp = next[index];
+      next[index] = next[targetIndex];
+      next[targetIndex] = temp;
+      return next;
+    });
+  };
+
+  const removeFile = (index: number, fileSetter: Dispatch<SetStateAction<File[]>>) => {
+    fileSetter((current) => current.filter((_, idx) => idx !== index));
   };
 
   const resetAddForm = () => {
     setForm(initialForm);
     setSelectedFiles([]);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedRoom(null);
+    setEditForm(initialForm);
+    setEditFiles([]);
   };
 
   const handleAddRoom = async (event: FormEvent<HTMLFormElement>) => {
@@ -200,6 +260,8 @@ const Rooms = () => {
     payload.append('description', form.description.trim());
     payload.append('price', form.price.trim());
     payload.append('capacity', form.capacity.trim());
+    payload.append('status', form.status);
+    payload.append('amenities', parseAmenitiesInput(form.amenitiesText).join(','));
 
     selectedFiles.forEach((file) => {
       payload.append('images', file);
@@ -215,20 +277,7 @@ const Rooms = () => {
 
       const created = response.data?.data;
       if (created) {
-        const room: Room = {
-          id: String(created.id),
-          name: String(created.name || form.name),
-          type: String(created.type || form.type || 'Standard'),
-          description: String(created.description || form.description),
-          price: typeof created.price === 'number' ? created.price : Number(created.price || form.price),
-          capacity: typeof created.capacity === 'number' ? created.capacity : Number(created.capacity || form.capacity),
-          images: Array.isArray(created.images) ? created.images : [],
-          status: 'available',
-          amenities: defaultAmenities,
-          createdAt: created.createdAt,
-        };
-
-        setRooms((current) => [room, ...current]);
+        setRooms((current) => [normalizeRoom(created), ...current]);
       }
 
       setError(null);
@@ -245,6 +294,77 @@ const Rooms = () => {
       );
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const openViewModal = (room: Room) => {
+    setSelectedRoom(room);
+    setIsViewModalOpen(true);
+  };
+
+  const openEditModal = (room: Room) => {
+    setSelectedRoom(room);
+    setEditForm({
+      name: room.name,
+      type: room.type,
+      description: room.description,
+      price: String(room.price),
+      capacity: String(room.capacity),
+      status: room.status,
+      amenitiesText: room.amenities.join(', '),
+    });
+    setEditFiles([]);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditRoom = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!selectedRoom) return;
+
+    if (!editForm.name.trim() || !editForm.description.trim() || !editForm.price.trim() || !editForm.capacity.trim()) {
+      setError('Please fill all required fields.');
+      return;
+    }
+
+    const payload = new FormData();
+    payload.append('name', editForm.name.trim());
+    payload.append('type', editForm.type.trim() || 'Standard');
+    payload.append('description', editForm.description.trim());
+    payload.append('price', editForm.price.trim());
+    payload.append('capacity', editForm.capacity.trim());
+    payload.append('status', editForm.status);
+    payload.append('amenities', parseAmenitiesInput(editForm.amenitiesText).join(','));
+    editFiles.forEach((file) => {
+      payload.append('images', file);
+    });
+
+    try {
+      setUpdating(true);
+      const response = await api.put(`/rooms/${selectedRoom.id}`, payload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const updated = response.data?.data;
+      if (updated) {
+        const normalized = normalizeRoom(updated);
+        setRooms((current) => current.map((room) => (room.id === normalized.id ? normalized : room)));
+      }
+
+      setError(null);
+      setSuccessMessage('Room updated successfully.');
+      setTimeout(() => setSuccessMessage(null), 3000);
+      closeEditModal();
+    } catch (updateError: unknown) {
+      setSuccessMessage(null);
+      setError(
+        axios.isAxiosError(updateError)
+          ? updateError.response?.data?.message || 'Room update failed. Please try again.'
+          : 'Room update failed. Please try again.'
+      );
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -417,14 +537,14 @@ const Rooms = () => {
                           <button
                             className="p-2 text-gray-500 hover:text-slate-600 hover:bg-gray-100 rounded-lg transition-all"
                             title="View Details"
-                            onClick={() => window.alert(room.description || 'No description available.')}
+                            onClick={() => openViewModal(room)}
                           >
                             <Eye className="h-4 w-4" />
                           </button>
                           <button
-                            className="p-2 text-gray-400 hover:text-gray-400 rounded-lg transition-all cursor-not-allowed"
-                            title="Edit coming soon"
-                            disabled
+                            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                            title="Edit Room"
+                            onClick={() => openEditModal(room)}
                           >
                             <Pencil className="h-4 w-4" />
                           </button>
@@ -470,8 +590,9 @@ const Rooms = () => {
       </div>
 
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-3 sm:p-4">
+          <div className="flex min-h-full items-start justify-center py-4 sm:items-center sm:py-6">
+            <div className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl max-h-[92vh] overflow-hidden">
             <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
               <h2 className="text-xl font-semibold text-gray-900">Add New Room</h2>
               <button
@@ -485,7 +606,7 @@ const Rooms = () => {
               </button>
             </div>
 
-            <form onSubmit={handleAddRoom} className="space-y-4 px-6 py-5">
+            <form onSubmit={handleAddRoom} className="space-y-4 px-6 py-5 overflow-y-auto max-h-[calc(92vh-84px)]">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-2">
                   <label className="mb-1 block text-sm font-medium text-gray-700">Room Name *</label>
@@ -535,15 +656,71 @@ const Rooms = () => {
                 </div>
 
                 <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Status</label>
+                  <select
+                    value={form.status}
+                    onChange={(e) => setForm((current) => ({ ...current, status: e.target.value as RoomStatus }))}
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-500 bg-white"
+                  >
+                    {roomStatusOptions.map((status) => (
+                      <option key={status} value={status}>
+                        {getStatusLabel(status)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">Images (up to 5)</label>
                   <input
                     type="file"
                     accept="image/*"
                     multiple
-                    onChange={handleFileChange}
+                    onChange={(event) => handleFileChange(event, setSelectedFiles)}
                     className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
                   />
                   <p className="mt-1 text-xs text-gray-500">{selectedFiles.length} file(s) selected</p>
+                  {selectedFiles.length > 1 && (
+                    <div className="mt-2 space-y-2 rounded-xl border border-gray-100 bg-gray-50 p-2">
+                      <p className="text-xs font-medium text-gray-600">Set image order (1 = first image shown)</p>
+                      {selectedFiles.map((file, index) => (
+                        <div key={`${file.name}-${index}`} className="flex items-center justify-between gap-2 rounded-lg bg-white px-2 py-1.5">
+                          <div className="truncate text-xs text-gray-700">
+                            <span className="mr-2 font-semibold text-gray-500">{index + 1}.</span>
+                            {file.name}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => moveFile(index, 'up', setSelectedFiles)}
+                              disabled={index === 0}
+                              className="rounded p-1 text-gray-500 hover:bg-gray-100 disabled:opacity-40"
+                              title="Move up"
+                            >
+                              <ArrowUp className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveFile(index, 'down', setSelectedFiles)}
+                              disabled={index === selectedFiles.length - 1}
+                              className="rounded p-1 text-gray-500 hover:bg-gray-100 disabled:opacity-40"
+                              title="Move down"
+                            >
+                              <ArrowDown className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removeFile(index, setSelectedFiles)}
+                              className="rounded p-1 text-red-500 hover:bg-red-50"
+                              title="Remove image"
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="sm:col-span-2">
@@ -555,6 +732,18 @@ const Rooms = () => {
                     className="w-full rounded-xl border border-gray-200 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-500"
                     required
                   />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Amenities</label>
+                  <textarea
+                    rows={3}
+                    value={form.amenitiesText}
+                    onChange={(e) => setForm((current) => ({ ...current, amenitiesText: e.target.value }))}
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                    placeholder="Free WiFi, Smart TV, Coffee Maker"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Separate amenities with commas or new lines.</p>
                 </div>
               </div>
 
@@ -575,6 +764,255 @@ const Rooms = () => {
                   className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
                 >
                   {submitting ? 'Saving...' : 'Create Room'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        </div>
+      )}
+
+      {isViewModalOpen && selectedRoom && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-3xl rounded-2xl bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+              <h2 className="text-xl font-semibold text-gray-900">{selectedRoom.name}</h2>
+              <button
+                onClick={() => {
+                  setIsViewModalOpen(false);
+                  setSelectedRoom(null);
+                }}
+                className="rounded-full p-2 hover:bg-gray-100"
+              >
+                <X className="h-5 w-5 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="space-y-4 px-6 py-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                  <p className="text-xs uppercase tracking-wide text-gray-500">Type</p>
+                  <p className="mt-1 text-base font-medium text-gray-900">{selectedRoom.type}</p>
+                </div>
+                <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                  <p className="text-xs uppercase tracking-wide text-gray-500">Price</p>
+                  <p className="mt-1 text-base font-medium text-gray-900">${selectedRoom.price} / night</p>
+                </div>
+                <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                  <p className="text-xs uppercase tracking-wide text-gray-500">Capacity</p>
+                  <p className="mt-1 text-base font-medium text-gray-900">{selectedRoom.capacity} guests</p>
+                </div>
+                <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                  <p className="text-xs uppercase tracking-wide text-gray-500">Created</p>
+                  <p className="mt-1 text-base font-medium text-gray-900">
+                    {selectedRoom.createdAt ? new Date(selectedRoom.createdAt).toLocaleString() : 'N/A'}
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <p className="mb-1 text-sm font-medium text-gray-700">Description</p>
+                <p className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-sm text-gray-700">
+                  {selectedRoom.description || 'No description available.'}
+                </p>
+              </div>
+
+              <div>
+                <p className="mb-2 text-sm font-medium text-gray-700">Images</p>
+                {selectedRoom.images.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {selectedRoom.images.map((img) => (
+                      <img key={img} src={img} alt={selectedRoom.name} className="h-28 w-full rounded-lg object-cover" />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-sm text-gray-500">No images uploaded.</p>
+                )}
+              </div>
+
+              <div>
+                <p className="mb-2 text-sm font-medium text-gray-700">Amenities</p>
+                <div className="flex flex-wrap gap-2 rounded-xl border border-gray-100 bg-gray-50 p-4">
+                  {selectedRoom.amenities.length > 0 ? (
+                    selectedRoom.amenities.map((amenity) => (
+                      <span key={`${selectedRoom.id}-${amenity}`} className="rounded-full bg-white px-3 py-1 text-xs text-gray-700 border border-gray-200">
+                        {amenity}
+                      </span>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-500">No amenities set.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isEditModalOpen && selectedRoom && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+              <h2 className="text-xl font-semibold text-gray-900">Edit Room</h2>
+              <button onClick={closeEditModal} className="rounded-full p-2 hover:bg-gray-100">
+                <X className="h-5 w-5 text-gray-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditRoom} className="space-y-4 px-6 py-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Room Name *</label>
+                  <input
+                    type="text"
+                    value={editForm.name}
+                    onChange={(e) => setEditForm((current) => ({ ...current, name: e.target.value }))}
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Type</label>
+                  <input
+                    type="text"
+                    value={editForm.type}
+                    onChange={(e) => setEditForm((current) => ({ ...current, type: e.target.value }))}
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Capacity *</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={editForm.capacity}
+                    onChange={(e) => setEditForm((current) => ({ ...current, capacity: e.target.value }))}
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Price Per Night *</label>
+                  <input
+                    type="number"
+                    min={1}
+                    step="0.01"
+                    value={editForm.price}
+                    onChange={(e) => setEditForm((current) => ({ ...current, price: e.target.value }))}
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Status</label>
+                  <select
+                    value={editForm.status}
+                    onChange={(e) => setEditForm((current) => ({ ...current, status: e.target.value as RoomStatus }))}
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-500 bg-white"
+                  >
+                    {roomStatusOptions.map((status) => (
+                      <option key={status} value={status}>
+                        {getStatusLabel(status)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Replace Images (optional)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(event) => handleFileChange(event, setEditFiles)}
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">{editFiles.length} file(s) selected</p>
+                  {editFiles.length > 1 && (
+                    <div className="mt-2 space-y-2 rounded-xl border border-gray-100 bg-gray-50 p-2">
+                      <p className="text-xs font-medium text-gray-600">Set image order (1 = first image shown)</p>
+                      {editFiles.map((file, index) => (
+                        <div key={`${file.name}-${index}`} className="flex items-center justify-between gap-2 rounded-lg bg-white px-2 py-1.5">
+                          <div className="truncate text-xs text-gray-700">
+                            <span className="mr-2 font-semibold text-gray-500">{index + 1}.</span>
+                            {file.name}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => moveFile(index, 'up', setEditFiles)}
+                              disabled={index === 0}
+                              className="rounded p-1 text-gray-500 hover:bg-gray-100 disabled:opacity-40"
+                              title="Move up"
+                            >
+                              <ArrowUp className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveFile(index, 'down', setEditFiles)}
+                              disabled={index === editFiles.length - 1}
+                              className="rounded p-1 text-gray-500 hover:bg-gray-100 disabled:opacity-40"
+                              title="Move down"
+                            >
+                              <ArrowDown className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removeFile(index, setEditFiles)}
+                              className="rounded p-1 text-red-500 hover:bg-red-50"
+                              title="Remove image"
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Description *</label>
+                  <textarea
+                    rows={4}
+                    value={editForm.description}
+                    onChange={(e) => setEditForm((current) => ({ ...current, description: e.target.value }))}
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                    required
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Amenities</label>
+                  <textarea
+                    rows={3}
+                    value={editForm.amenitiesText}
+                    onChange={(e) => setEditForm((current) => ({ ...current, amenitiesText: e.target.value }))}
+                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                    placeholder="Free WiFi, Smart TV, Coffee Maker"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Separate amenities with commas or new lines.</p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
+                <button
+                  type="button"
+                  onClick={closeEditModal}
+                  className="rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={updating}
+                  className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+                >
+                  {updating ? 'Updating...' : 'Save Changes'}
                 </button>
               </div>
             </form>

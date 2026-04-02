@@ -3,6 +3,48 @@ const { uploadBuffer, deleteByPublicId } = require('../services/cloudinaryServic
 const { logAdminAction } = require('../services/auditService');
 const asyncHandler = require('../utils/asyncHandler');
 
+const ROOM_STATUSES = ['available', 'occupied', 'maintenance', 'booked'];
+
+const parseRoomStatus = (value, fallback = 'available') => {
+  if (value === undefined || value === null || value === '') {
+    return fallback;
+  }
+
+  const normalized = String(value).trim().toLowerCase();
+  return ROOM_STATUSES.includes(normalized) ? normalized : fallback;
+};
+
+const parseAmenities = (value, fallback = []) => {
+  if (value === undefined || value === null) {
+    return fallback;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.map((item) => String(item).trim()).filter(Boolean);
+      }
+    } catch {
+      // Fallback to comma/newline parsing.
+    }
+
+    return trimmed
+      .split(/[\n,]/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  return fallback;
+};
+
 /**
  * @desc    Get all rooms
  * @route   GET /api/rooms
@@ -45,7 +87,7 @@ exports.getRoom = asyncHandler(async (req, res) => {
  * @access  Private/Admin
  */
 exports.createRoom = asyncHandler(async (req, res) => {
-  const { name, type, description, price, capacity } = req.body;
+  const { name, type, description, price, capacity, status, amenities } = req.body;
 
   let images = [];
   let imagePublicIds = [];
@@ -66,6 +108,8 @@ exports.createRoom = asyncHandler(async (req, res) => {
     description,
     price: parseFloat(price),
     capacity: parseInt(capacity),
+    status: parseRoomStatus(status, 'available'),
+    amenities: parseAmenities(amenities, []),
     images,
     imagePublicIds,
   });
@@ -99,7 +143,7 @@ exports.updateRoom = asyncHandler(async (req, res) => {
     });
   }
 
-  const { name, type, description, price, capacity } = req.body;
+  const { name, type, description, price, capacity, status, amenities } = req.body;
   
   // Handle new images if uploaded, otherwise keep old ones
   let images = room.images;
@@ -125,6 +169,8 @@ exports.updateRoom = asyncHandler(async (req, res) => {
     description,
     price: price ? parseFloat(price) : undefined,
     capacity: capacity ? parseInt(capacity) : undefined,
+    status: parseRoomStatus(status, room.status || 'available'),
+    amenities: parseAmenities(amenities, room.amenities || []),
     images,
     imagePublicIds,
   });

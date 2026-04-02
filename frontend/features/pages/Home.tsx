@@ -94,6 +94,82 @@ const fallbackRooms = [
     ],
     isFeatured: true,
   },
+  {
+    id: "4",
+    name: "Family Comfort Room",
+    image: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80&w=1080",
+    description: "A cozy family-friendly room with flexible bedding and generous floor space.",
+    features: ["Free WiFi", "Smart TV", "Coffee Maker", "Work Desk"],
+    price: 220,
+    maxGuests: 4,
+    size: "48 m2",
+    bedType: "1 King + 1 Sofa Bed",
+    viewType: "Courtyard View",
+    occupancy: "2 adults + 2 children",
+    tagline: "Ideal for family trips with extra space",
+    amenities: ["WiFi", "Smart TV", "Coffee Maker", "Work Desk", "Mini Fridge"],
+    policies: [
+      "Check-in: 2:00 PM | Check-out: 12:00 PM",
+      "Complimentary crib available on request",
+      "Child-friendly amenities included",
+    ],
+    gallery: [
+      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80&w=1080",
+      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=1080",
+      "https://images.unsplash.com/photo-1551776235-dde6d4829808?auto=format&fit=crop&q=80&w=1080",
+    ],
+  },
+  {
+    id: "5",
+    name: "Garden View Deluxe",
+    image: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=1080",
+    description: "Relaxing deluxe room overlooking the garden with warm interiors and modern comfort.",
+    features: ["Free WiFi", "Smart TV", "Mini Bar", "Rain Shower"],
+    price: 190,
+    maxGuests: 2,
+    size: "34 m2",
+    bedType: "Queen Bed",
+    viewType: "Garden View",
+    occupancy: "2 adults",
+    tagline: "Calm atmosphere with scenic garden views",
+    amenities: ["WiFi", "Smart TV", "Minibar", "Rain Shower", "Tea Kettle"],
+    policies: [
+      "Check-in: 2:00 PM | Check-out: 12:00 PM",
+      "Non-smoking room",
+      "Late checkout subject to availability",
+    ],
+    gallery: [
+      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=1080",
+      "https://images.unsplash.com/photo-1592901147824-212145b050cf?auto=format&fit=crop&q=80&w=1080",
+      "https://images.unsplash.com/photo-1758448511255-ac2a24a135d7?auto=format&fit=crop&q=80&w=1080",
+    ],
+  },
+  {
+    id: "6",
+    name: "Business Premier Room",
+    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=1080",
+    description: "Modern room tailored for business travelers with ergonomic workspace and fast connectivity.",
+    features: ["Free WiFi", "Smart TV", "Work Desk", "Coffee Maker"],
+    price: 280,
+    maxGuests: 2,
+    size: "38 m2",
+    bedType: "King Bed",
+    viewType: "City Skyline View",
+    occupancy: "2 adults",
+    tagline: "Business-ready comfort with premium amenities",
+    amenities: ["WiFi", "Smart TV", "Work Desk", "Coffee Maker", "In-Room Safe"],
+    policies: [
+      "Check-in: 2:00 PM | Check-out: 12:00 PM",
+      "Express check-in available",
+      "Airport transfer available on request",
+    ],
+    gallery: [
+      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=1080",
+      "https://images.unsplash.com/photo-1664780476492-fbb9fd277ce8?auto=format&fit=crop&q=80&w=1080",
+      "https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&q=80&w=1080",
+    ],
+    isFeatured: true,
+  },
 ];
 
 const fallbackServices = [
@@ -142,7 +218,7 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
-  const roomRecords = Array.isArray(initialData.rooms) ? initialData.rooms.slice(0, 3) : [];
+  const roomRecords = Array.isArray(initialData.rooms) ? initialData.rooms.slice(0, 6) : [];
   const hasUsableRoomData = roomRecords.some((r: any) => {
     if (!r || typeof r !== "object") return false;
     return Boolean(r.name || r.description || r.price || r.capacity || (Array.isArray(r.images) && r.images.length > 0));

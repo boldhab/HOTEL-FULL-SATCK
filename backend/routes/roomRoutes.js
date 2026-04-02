@@ -12,6 +12,14 @@ const upload = require('../middleware/uploadMiddleware');
 const validate = require('../middleware/validate');
 
 const router = express.Router();
+const roomStatuses = ['available', 'occupied', 'maintenance', 'booked'];
+const amenitiesValidator = (value) => {
+  if (value === undefined || value === null || value === '') return true;
+  if (Array.isArray(value)) {
+    return value.every((item) => typeof item === 'string');
+  }
+  return typeof value === 'string';
+};
 
 router.get('/', getRooms);
 router.get('/:id', getRoom);
@@ -28,6 +36,8 @@ router.post(
     body('description').notEmpty().withMessage('Description is required'),
     body('price').isFloat({ gt: 0 }).withMessage('Price must be greater than 0'),
     body('capacity').isInt({ gt: 0 }).withMessage('Capacity must be greater than 0'),
+    body('status').optional().isIn(roomStatuses).withMessage('Invalid room status'),
+    body('amenities').optional().custom(amenitiesValidator).withMessage('Amenities must be a string or array'),
   ],
   validate,
   createRoom
@@ -43,6 +53,8 @@ router.put(
     body('description').optional().isString(),
     body('price').optional().isFloat({ gt: 0 }),
     body('capacity').optional().isInt({ gt: 0 }),
+    body('status').optional().isIn(roomStatuses).withMessage('Invalid room status'),
+    body('amenities').optional().custom(amenitiesValidator).withMessage('Amenities must be a string or array'),
   ],
   validate,
   updateRoom

@@ -25,6 +25,8 @@ model Room {
   description String
   price       Float
   capacity    Int
+  status      String    @default("available")
+  amenities   String[]  @default([])
   images      String[]  // Cloudinary URLs
   imagePublicIds String[] // Cloudinary public IDs
   createdAt   DateTime  @default(now())
