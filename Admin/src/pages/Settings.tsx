@@ -1,26 +1,23 @@
 import { useState, useEffect } from 'react';
 import { 
-  SaveIcon, 
-  BuildingOfficeIcon, 
-  EnvelopeIcon, 
-  MapPinIcon,
-  GlobeAltIcon,
-  PhoneIcon,
-  ClockIcon,
-  CreditCardIcon,
-  ShieldCheckIcon,
-  BellIcon,
-  PaintBrushIcon,
-  LanguageIcon,
-  KeyIcon,
-  UserGroupIcon,
-  DocumentTextIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  ArrowPathIcon,
-  PencilIcon
-} from '@heroicons/react/24/outline';
-import { CheckBadgeIcon } from '@heroicons/react/24/solid';
+  Save as SaveIcon,
+  Building2 as BuildingOfficeIcon,
+  Mail as EnvelopeIcon,
+  MapPin as MapPinIcon,
+  Globe as GlobeAltIcon,
+  Phone as PhoneIcon,
+  Clock3 as ClockIcon,
+  CreditCard as CreditCardIcon,
+  ShieldCheck as ShieldCheckIcon,
+  Bell as BellIcon,
+  KeyRound as KeyIcon,
+  Users as UserGroupIcon,
+  FileText as DocumentTextIcon,
+  CircleCheck as CheckCircleIcon,
+  TriangleAlert as ExclamationTriangleIcon,
+  RefreshCw as ArrowPathIcon,
+  BadgeCheck as CheckBadgeIcon
+} from 'lucide-react';
 import api from '../services/api';
 
 interface SettingsData {
