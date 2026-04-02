@@ -219,7 +219,15 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
-  const roomRecords = Array.isArray(initialData.rooms) ? initialData.rooms.slice(0, HOME_ROOM_LIMIT) : [];
+  const roomRecords = Array.isArray(initialData.rooms)
+    ? [...initialData.rooms]
+        .sort((a: any, b: any) => {
+          const aTime = a?.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const bTime = b?.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return bTime - aTime;
+        })
+        .slice(0, HOME_ROOM_LIMIT)
+    : [];
   const hasUsableRoomData = roomRecords.some((r: any) => {
     if (!r || typeof r !== "object") return false;
     return Boolean(r.name || r.description || r.price || r.capacity || (Array.isArray(r.images) && r.images.length > 0));
