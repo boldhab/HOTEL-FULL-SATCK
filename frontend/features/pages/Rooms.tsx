@@ -128,28 +128,35 @@ export function Rooms({ initialRooms = [] }: { initialRooms?: any[] }) {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1]);
 
-  const displayRooms = initialRooms.length > 0 ? initialRooms.map(r => ({
-    id: r.id,
-    name: r.name,
-    image: r.images?.[0] || 'https://images.unsplash.com/photo-1592901147824-212145b050cf?auto=format&fit=crop&q=80&w=1080',
-    description: r.description,
-    features: ["Free WiFi", "Smart TV", "Mini Bar", "Rain Shower"], 
-    price: r.price,
-    maxGuests: r.capacity,
-    size: r.size || "30 m2",
-    bedType: r.bedType || "King Bed",
-    viewType: r.viewType || "City View",
-    occupancy: r.occupancy || `${r.capacity || 2} adults`,
-    tagline: r.tagline || "Includes breakfast and free Wi-Fi",
-    amenities: r.amenities || ["WiFi", "Smart TV", "Minibar", "Rain Shower", "Coffee Maker"],
-    policies: r.policies || [
-      "Check-in: 2:00 PM | Check-out: 12:00 PM",
-      "Free cancellation up to 24 hours before arrival",
-      "Extra bed available on request",
-    ],
-    gallery: r.images?.length ? r.images : [r.images?.[0] || 'https://images.unsplash.com/photo-1592901147824-212145b050cf?auto=format&fit=crop&q=80&w=1080'],
-    isFeatured: Boolean(r.isFeatured)
-  })) : fallbackRooms;
+  const roomRecords = Array.isArray(initialRooms) ? initialRooms : [];
+  const hasUsableRoomData = roomRecords.some((r: any) => {
+    if (!r || typeof r !== "object") return false;
+    return Boolean(r.name || r.description || r.price || r.capacity || (Array.isArray(r.images) && r.images.length > 0));
+  });
+
+  const displayRooms = hasUsableRoomData
+    ? roomRecords.map((r: any, index: number) => {
+        const fallbackRoom = fallbackRooms[index % fallbackRooms.length];
+        return {
+          id: r.id || fallbackRoom.id,
+          name: r.name || fallbackRoom.name,
+          image: r.images?.[0] || fallbackRoom.image,
+          description: r.description || fallbackRoom.description,
+          features: Array.isArray(r.features) && r.features.length > 0 ? r.features : fallbackRoom.features,
+          price: typeof r.price === "number" ? r.price : fallbackRoom.price,
+          maxGuests: typeof r.capacity === "number" ? r.capacity : fallbackRoom.maxGuests,
+          size: r.size || fallbackRoom.size,
+          bedType: r.bedType || fallbackRoom.bedType,
+          viewType: r.viewType || fallbackRoom.viewType,
+          occupancy: r.occupancy || `${r.capacity || fallbackRoom.maxGuests} adults`,
+          tagline: r.tagline || fallbackRoom.tagline,
+          amenities: Array.isArray(r.amenities) && r.amenities.length > 0 ? r.amenities : fallbackRoom.amenities,
+          policies: Array.isArray(r.policies) && r.policies.length > 0 ? r.policies : fallbackRoom.policies,
+          gallery: Array.isArray(r.images) && r.images.length > 0 ? r.images : fallbackRoom.gallery,
+          isFeatured: typeof r.isFeatured === "boolean" ? r.isFeatured : Boolean(fallbackRoom.isFeatured),
+        };
+      })
+    : fallbackRooms;
 
   return (
     <div className="overflow-hidden">
