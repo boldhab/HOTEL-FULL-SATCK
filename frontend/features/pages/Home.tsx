@@ -13,8 +13,8 @@ import { ServiceCard } from "@/components/features/ServiceCard";
 import { ImageWithFallback } from "@/components/media/ImageWithFallback";
 import { useState, useEffect, useRef } from "react";
 
-const heroImage = "https://images.unsplash.com/photo-1744782996368-dc5b7e697f4c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMGxvYmJ5JTIwaW50ZXJpb3J8ZW58MXx8fHwxNzczODM3MTM1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
-const aboutImage = "https://images.unsplash.com/photo-1769766407883-1645a93eed40?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMGV4dGVyaW9yJTIwYnVpbGRpbmclMjBuaWdodHxlbnwxfHx8fDE3NzM5MjUyOTh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
+const heroImage = "/images/service_hero.png";
+const aboutImage = "/images/overview_gallery4.png";
 
 const fallbackRooms = [
   {
@@ -128,10 +128,10 @@ const fallbackServices = [
 ];
 
 const defaultGallery = [
-  "https://images.unsplash.com/photo-1768697358705-c1b60333da35?auto=format&fit=crop&q=80&w=1080",
-  "https://images.unsplash.com/photo-1731080647266-85cf1bc27162?auto=format&fit=crop&q=80&w=1080",
-  "https://images.unsplash.com/photo-1584536318461-2ee56bc042f1?auto=format&fit=crop&q=80&w=1080",
-  "https://images.unsplash.com/photo-1759038085950-1234ca8f5fed?auto=format&fit=crop&q=80&w=1080",
+  "/images/overview_gallaer1.png",
+  "/images/overview_gallery2.png",
+  "/images/overview_gallery3.png",
+  "/images/overview_gallery4.png",
 ];
 
 export function Home({ initialData = { rooms: [], gallery: [], services: [] } }: { initialData?: any }) {
@@ -275,7 +275,7 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
                   <div className="flex flex-wrap items-center gap-2.5">
                     <span className="text-xs sm:text-sm tracking-[0.18em] text-[#c9a961] uppercase">Ethio Bernos Hotel</span>
                     <span className="h-1 w-1 rounded-full bg-white/70" />
-                    <span className="text-xs sm:text-sm text-white/85">Trusted by travelers in Addis Ababa</span>
+                    <span className="text-xs sm:text-sm text-white/85">Trusted by travelers in Debre Birhan</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
                     <div className="flex items-center gap-1.5">
@@ -292,7 +292,7 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
                     </div>
                     <div className="flex items-center gap-1.5 text-white/90">
                       <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#c9a961]" />
-                      <span>Bole Road, Addis Ababa</span>
+                      <span>Bole Road, Debre Birhan</span>
                     </div>
                   </div>
                 </div>
@@ -346,7 +346,7 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-base sm:text-lg md:text-xl mb-8 sm:mb-10 text-white/90 max-w-3xl mx-auto leading-relaxed"
           >
-            Where elegance meets exceptional hospitality in the heart of Addis Ababa
+            Where elegance meets exceptional hospitality in the heart of Debre Birhan
           </motion.p>
           
           <motion.div
@@ -458,7 +458,7 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
               <div className="w-24 h-1 bg-gradient-to-r from-[#c9a961] to-transparent mb-8" />
               
               <p className="text-gray-600 mb-6 leading-relaxed text-lg">
-                Nestled in the heart of Addis Ababa, Ethio Bernos Hotel offers an unparalleled blend 
+                Nestled in the heart of Debre Birhan, Ethio Bernos Hotel offers an unparalleled blend 
                 of modern luxury and traditional Ethiopian hospitality. Our commitment to excellence 
                 ensures every guest experiences the finest in comfort and service.
               </p>

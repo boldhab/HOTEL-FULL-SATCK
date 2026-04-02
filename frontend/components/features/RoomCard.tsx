@@ -81,7 +81,7 @@ export function RoomCard({
   amenities,
   policies,
   gallery,
-  locationNote = "Bole Road, Addis Ababa",
+  locationNote = "Bole Road, Debre Birhan",
   isFeatured = false,
   index = 0,
 }: RoomCardProps) {

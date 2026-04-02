@@ -93,7 +93,7 @@ export function Contact() {
               {
                 icon: MapPin,
                 title: "Address",
-                content: "Bole Road, Addis Ababa, Ethiopia",
+                content: "Bole Road, Debre Birhan, Ethiopia",
               },
               {
                 icon: Phone,
@@ -315,7 +315,7 @@ export function Contact() {
                 </h3>
                 <ul className="space-y-4">
                   {[
-                    "Prime location in the heart of Addis Ababa",
+                    "Prime location in the heart of Debre Birhan",
                     "24/7 multilingual customer support",
                     "Complimentary airport shuttle service",
                     "Flexible cancellation policies",

@@ -152,9 +152,9 @@ export function Rooms({ initialRooms = [] }: { initialRooms?: any[] }) {
   })) : fallbackRooms;
 
   return (
-    <div className="pt-20 overflow-hidden">
+    <div className="overflow-hidden">
       {/* Hero Section with Parallax */}
-      <section ref={heroRef} className="relative h-[70vh] flex items-center justify-center overflow-hidden">
+      <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden">
         <motion.div className="absolute inset-0" style={{ scale }}>
           <ImageWithFallback
             src={heroImage}

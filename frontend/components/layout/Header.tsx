@@ -29,6 +29,9 @@ export function Header() {
   const { scrollY } = useScroll();
   const isHomePage = pathname === "/";
   const showSolidHeader = !isHomePage || isScrolled || isMenuOpen;
+  const headerBackground = isHomePage && !showSolidHeader
+    ? "rgba(44, 30, 24, 0.88)"
+    : "rgba(92, 62, 46, 0.95)";
 
   // Scroll progress indicator
   const scrollProgress = useTransform(scrollY, [0, 1000], [0, 1]);
@@ -65,7 +68,7 @@ export function Header() {
           href={link.path}
           className="relative px-4 py-2 text-sm font-medium tracking-wide transition-colors duration-300"
         >
-          <span className={`relative z-10 ${isActiveRoute(link.path) ? "text-[#C9A961]" : "text-white/90 hover:text-[#C9A961]"}`}>
+          <span className={`relative z-10 ${isActiveRoute(link.path) ? "text-[#E5C98A]" : "text-white hover:text-[#E5C98A]"}`}>
             {link.name}
           </span>
           {isActiveRoute(link.path) && (
@@ -91,11 +94,11 @@ export function Header() {
   return (
     <motion.header
       style={{
-        backgroundColor: showSolidHeader ? "rgba(92, 62, 46, 0.95)" : "transparent",
-        backdropFilter: showSolidHeader ? "blur(12px)" : "blur(0px)",
+        backgroundColor: headerBackground,
+        backdropFilter: "blur(12px)",
       }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        showSolidHeader ? "border-b border-white/10 shadow-md" : "border-b border-transparent"
+        showSolidHeader ? "border-b border-white/15 shadow-md" : "border-b border-white/10 shadow-sm"
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}

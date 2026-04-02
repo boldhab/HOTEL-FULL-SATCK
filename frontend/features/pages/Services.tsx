@@ -102,9 +102,9 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
   ];
 
   const eventGallery = [
-    "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1000&q=80",
-    "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1000&q=80",
-    "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=1000&q=80",
+    "/images/about_event.png",
+    "/images/gallery_1.png",
+    "/images/meeting_hall1.png",
   ];
 
   const amenityHighlights = [
@@ -123,7 +123,7 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
       title: "Grand Ballroom",
       capacity: "Up to 300 persons",
       description: "Our magnificent ballroom featuring crystal chandeliers, advanced acoustics, and flexible configurations for grand celebrations and corporate galas.",
-      image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1000&q=80",
+      image: "/images/meeting_hall1.png",
       features: ["4K Projection", "Premium Sound System", "Stage Lighting", "Dance Floor"],
       details: "The Grand Ballroom offers a premium setting with elegant decor, generous floor space, and customizable seating arrangements to match your event style and flow.",
       idealFor: ["Weddings", "Corporate Galas", "Large Conferences", "Award Ceremonies"],
@@ -132,7 +132,7 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
       title: "Executive Conference Hall",
       capacity: "Up to 120 persons",
       description: "A sophisticated mid-size venue equipped with cutting-edge technology, ideal for corporate meetings, training sessions, and professional seminars.",
-      image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1000&q=80",
+      image: "/images/meeting_hall2.png",
       features: ["HD Video Wall", "Conference Mic System", "Whiteboard", "Breakout Rooms"],
       details: "This hall is designed for focused, productive sessions with excellent visibility, audio clarity, and flexible setups for workshops or board-level presentations.",
       idealFor: ["Team Trainings", "Product Launches", "Workshops", "Business Seminars"],
@@ -141,7 +141,7 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
       title: "Boardroom Suite",
       capacity: "Up to 25 persons",
       description: "An exclusive, intimate setting for high-level board meetings, executive discussions, and private business negotiations.",
-      image: "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&w=1000&q=80",
+      image: "/images/meeting_hall3.png",
       features: ["Smart Board", "Video Conferencing", "Catering Service", "Privacy Screens"],
       details: "The Boardroom Suite delivers privacy and premium comfort for confidential discussions, with dedicated in-room service and modern collaboration tools.",
       idealFor: ["Executive Meetings", "Private Negotiations", "Strategy Sessions", "VIP Briefings"],

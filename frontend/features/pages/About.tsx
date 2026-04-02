@@ -464,7 +464,7 @@ export function About() {
               Experience the Ethio Bernos Difference
             </h2>
             <p className="text-gray-300 text-xl mb-12">
-              Join us and discover why we're Addis Ababa's premier luxury destination
+              Join us and discover why we're Debre Birhan's premier luxury destination
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
               <button className="px-10 py-4 bg-[#c9a961] text-white rounded-full font-semibold hover:bg-[#b58a4a] transition-all duration-300 transform hover:scale-105 shadow-xl text-lg">
@@ -477,7 +477,7 @@ export function About() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-white/10">
               <div className="flex items-center justify-center gap-3 text-white">
                 <MapPin className="h-5 w-5 text-[#c9a961]" />
-                <span>Addis Ababa, Ethiopia</span>
+                <span>Debre Birhan, Ethiopia</span>
               </div>
               <div className="flex items-center justify-center gap-3 text-white">
                 <Phone className="h-5 w-5 text-[#c9a961]" />
