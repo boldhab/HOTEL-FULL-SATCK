@@ -8,7 +8,6 @@ import {
   X, 
   Image as ImageIcon, 
   MessageSquare, 
-  Briefcase,
   ChevronLeft,
   ChevronRight,
   Bell,
@@ -31,7 +30,6 @@ const AdminLayout = () => {
   const menuItems = [
     { title: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/', description: 'Overview & analytics' },
     { title: 'Rooms', icon: <Bed size={20} />, path: '/rooms', description: 'Manage accommodations' },
-    { title: 'Services', icon: <Briefcase size={20} />, path: '/services', description: 'Guest amenities' },
     { title: 'Gallery', icon: <ImageIcon size={20} />, path: '/gallery', description: 'Media management' },
     { title: 'Messages', icon: <MessageSquare size={20} />, path: '/messages', description: 'Guest inquiries' },
     { title: 'Settings', icon: <Settings size={20} />, path: '/settings', description: 'System preferences' },

@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login.tsx';
 import Dashboard from './pages/Dashboard.tsx';
 import Rooms from './pages/Rooms.tsx';
-import Services from './pages/Services.tsx';
 import Gallery from './pages/Gallery.tsx';
 import Messages from './pages/Messages.tsx';
 import Settings from './pages/Settings.tsx';
@@ -16,7 +15,6 @@ function App() {
         <Route path="/" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="rooms" element={<Rooms />} />
-          <Route path="services" element={<Services />} />
           <Route path="gallery" element={<Gallery />} />
           <Route path="messages" element={<Messages />} />
           <Route path="settings" element={<Settings />} />

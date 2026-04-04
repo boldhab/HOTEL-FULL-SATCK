@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import { 
   Mail,
   User,
@@ -23,10 +24,27 @@ type MessageItem = {
   content: string;
   isRead?: boolean;
   isStarred?: boolean;
+  adminReply?: string | null;
+  repliedAt?: string | null;
   createdAt: string;
   phone?: string;
   source?: 'contact' | 'booking' | 'feedback' | 'support';
 };
+
+const sanitizeMessageContent = (value: string) =>
+  value
+    .replace(/\bMark as Read\b/gi, '')
+    .replace(/\bStar(?:red)?\b/gi, '')
+    .replace(/\bDelete(?: Message)?\b/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+
+const normalizeMessage = (message: MessageItem, idx: number): MessageItem => ({
+  ...message,
+  content: sanitizeMessageContent(message.content),
+  isStarred: typeof message.isStarred === 'boolean' ? message.isStarred : idx < 2,
+  source: message.source || (['contact', 'booking', 'feedback', 'support'][idx % 4] as MessageItem['source']),
+});
 
 const formatDate = (value: string) => {
   const date = new Date(value);
@@ -70,12 +88,7 @@ const Messages = () => {
       try {
         const response = await api.get('/messages');
         const messagesData = Array.isArray(response.data?.data) ? response.data.data : [];
-        // Add some sample starred status for demo
-        const enrichedData = messagesData.map((msg: MessageItem, idx: number) => ({
-          ...msg,
-          isStarred: idx < 2, // First two messages starred for demo
-          source: msg.source || ['contact', 'booking', 'feedback', 'support'][idx % 4] as any
-        }));
+        const enrichedData = messagesData.map((msg: MessageItem, idx: number) => normalizeMessage(msg, idx));
         setMessages(enrichedData);
         setError(null);
       } catch {
@@ -90,19 +103,25 @@ const Messages = () => {
 
   const handleMarkAsRead = async (messageId: string) => {
     try {
-      await api.patch(`/messages/${messageId}/read`);
-      setMessages(prev => prev.map(msg => 
-        msg.id === messageId ? { ...msg, isRead: true } : msg
-      ));
+      await api.patch(`/messages/${messageId}/read`, { isRead: true });
+      setMessages(prev =>
+        prev.map(msg => (msg.id === messageId ? { ...msg, isRead: true } : msg))
+      );
+      setSelectedMessage(prev =>
+        prev?.id === messageId ? { ...prev, isRead: true } : prev
+      );
     } catch (error) {
       console.error('Failed to mark as read:', error);
     }
   };
 
   const handleToggleStar = async (messageId: string) => {
-    setMessages(prev => prev.map(msg => 
-      msg.id === messageId ? { ...msg, isStarred: !msg.isStarred } : msg
-    ));
+    setMessages(prev =>
+      prev.map(msg => (msg.id === messageId ? { ...msg, isStarred: !msg.isStarred } : msg))
+    );
+    setSelectedMessage(prev =>
+      prev?.id === messageId ? { ...prev, isStarred: !prev.isStarred } : prev
+    );
     // API call would go here
   };
 
@@ -122,16 +141,34 @@ const Messages = () => {
 
   const handleReply = async () => {
     if (!replyText.trim() || !selectedMessage) return;
-    
+
+    const adminReply = replyText.trim();
+    const repliedAt = new Date().toISOString();
     setSendingReply(true);
     try {
-      await api.post(`/messages/${selectedMessage.id}/reply`, { content: replyText });
+      await api.post(`/messages/${selectedMessage.id}/reply`, { adminReply });
       alert('Reply sent successfully!');
       setShowReplyModal(false);
       setReplyText('');
+      setMessages(prev =>
+        prev.map(msg =>
+          msg.id === selectedMessage.id
+            ? { ...msg, isRead: true, adminReply, repliedAt }
+            : msg
+        )
+      );
+      setSelectedMessage(prev =>
+        prev ? { ...prev, isRead: true, adminReply, repliedAt } : prev
+      );
     } catch (error) {
       console.error('Failed to send reply:', error);
-      alert('Failed to send reply. Please try again.');
+      if (axios.isAxiosError(error)) {
+        const validationMessage = error.response?.data?.errors?.[0]?.msg;
+        const backendMessage = error.response?.data?.message;
+        alert(validationMessage || backendMessage || 'Failed to send reply. Please try again.');
+      } else {
+        alert('Failed to send reply. Please try again.');
+      }
     } finally {
       setSendingReply(false);
     }
@@ -461,6 +498,22 @@ const Messages = () => {
                         {selectedMessage.content}
                       </p>
                     </div>
+
+                    {selectedMessage.adminReply && (
+                      <div className="mb-6 rounded-xl border border-emerald-100 bg-emerald-50 p-4">
+                        <div className="mb-2 flex items-center justify-between gap-3">
+                          <p className="text-xs font-semibold uppercase text-emerald-700">Your Reply</p>
+                          {selectedMessage.repliedAt && (
+                            <span className="text-xs text-emerald-600">
+                              {formatDate(selectedMessage.repliedAt)}
+                            </span>
+                          )}
+                        </div>
+                        <p className="whitespace-pre-wrap text-sm leading-relaxed text-emerald-900">
+                          {selectedMessage.adminReply}
+                        </p>
+                      </div>
+                    )}
                     
                     <div className="space-y-3">
                       <button
