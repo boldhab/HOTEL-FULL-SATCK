@@ -7,6 +7,7 @@ import { Menu, X, Phone, Sparkles, Calendar, User, ChevronRight } from "lucide-r
 import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
 import { Button } from "@/components/ui/actions/button";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import type { PublicSettings } from "@/lib/settings";
 
 // Constants
 const NAV_LINKS = [
@@ -20,9 +21,14 @@ const NAV_LINKS = [
 
 const SCROLL_THRESHOLD = 50;
 const HOME_HEADER_OFFSET = 140;
-const CONTACT_NUMBER = "+251911234567";
 
-export function Header() {
+type HeaderProps = {
+  settings: PublicSettings;
+};
+
+const normalizePhoneHref = (value: string) => `tel:${value.replace(/[^\d+]/g, "")}`;
+
+export function Header({ settings }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
@@ -130,7 +136,7 @@ export function Header() {
               </div>
               <div className="flex flex-col">
                 <span className="text-xl sm:text-2xl text-white font-serif tracking-tight">
-                  Ethio Bernos
+                  {settings.hotelName}
                 </span>
                 <span className="text-[10px] tracking-[0.2em] text-[#C9A961] uppercase">
                   Hotel & Resort
@@ -147,7 +153,7 @@ export function Header() {
             <ThemeToggle />
             
             <motion.a
-              href={`tel:${CONTACT_NUMBER}`}
+              href={normalizePhoneHref(settings.contactPhone)}
               className="text-white/80 hover:text-[#C9A961] transition-colors relative group"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
@@ -163,9 +169,9 @@ export function Header() {
               className="bg-gradient-to-r from-[#C9A961] to-[#B87C4F] hover:from-[#B87C4F] hover:to-[#8B5A3C] text-white px-6 shadow-lg hover:shadow-xl transition-all duration-300"
               asChild
             >
-              <Link href="/contact" className="flex items-center space-x-2">
+              <Link href={settings.maintenanceMode ? "/contact" : "/booking"} className="flex items-center space-x-2">
                 <Calendar className="w-4 h-4" />
-                <span>Book Now</span>
+                <span>{settings.maintenanceMode ? "Contact Us" : "Book Now"}</span>
               </Link>
             </Button>
           </div>
@@ -261,21 +267,21 @@ export function Header() {
                 </div>
 
                 <motion.a
-                  href={`tel:${CONTACT_NUMBER}`}
+                  href={normalizePhoneHref(settings.contactPhone)}
                   className="flex items-center space-x-3 px-4 py-3 text-white/80 hover:text-[#C9A961] hover:bg-white/5 transition-all duration-300 rounded-lg group"
                   whileHover={{ x: 5 }}
                 >
                   <Phone className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                  <span className="text-sm font-medium">{CONTACT_NUMBER}</span>
+                  <span className="text-sm font-medium">{settings.contactPhone}</span>
                 </motion.a>
 
                 <Button
                   className="w-full bg-gradient-to-r from-[#C9A961] to-[#B87C4F] hover:from-[#B87C4F] hover:to-[#8B5A3C] text-white shadow-lg"
                   asChild
                 >
-                  <Link href="/contact" className="flex items-center justify-center space-x-2 py-3">
+                  <Link href={settings.maintenanceMode ? "/contact" : "/booking"} className="flex items-center justify-center space-x-2 py-3">
                     <Calendar className="w-4 h-4" />
-                    <span>Book Your Stay</span>
+                    <span>{settings.maintenanceMode ? "Contact Our Team" : "Book Your Stay"}</span>
                   </Link>
                 </Button>
 

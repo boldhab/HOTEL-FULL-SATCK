@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 
 type ImageWithFallbackProps = ComponentProps<"img"> & {
   fallbackSrc?: string;
+  priority?: boolean;
 };
 
 const DEFAULT_FALLBACK =
@@ -15,6 +16,8 @@ export function ImageWithFallback({
   src,
   fallbackSrc = DEFAULT_FALLBACK,
   onError,
+  priority = false,
+  loading,
   ...props
 }: ImageWithFallbackProps) {
   const [imageSrc, setImageSrc] = useState(src);
@@ -28,6 +31,8 @@ export function ImageWithFallback({
       {...props}
       alt={alt}
       src={imageSrc}
+      loading={priority ? "eager" : loading}
+      fetchPriority={priority ? "high" : props.fetchPriority}
       onError={(event) => {
         if (imageSrc !== fallbackSrc) {
           setImageSrc(fallbackSrc);

@@ -10,9 +10,6 @@ import {
   CreditCard as CreditCardIcon,
   ShieldCheck as ShieldCheckIcon,
   Bell as BellIcon,
-  KeyRound as KeyIcon,
-  Users as UserGroupIcon,
-  FileText as DocumentTextIcon,
   CircleCheck as CheckCircleIcon,
   TriangleAlert as ExclamationTriangleIcon,
   RefreshCw as ArrowPathIcon,
@@ -35,51 +32,60 @@ interface SettingsData {
   maintenanceMode?: boolean;
 }
 
+const defaultSettingsData: SettingsData = {
+  hotelName: '',
+  contactEmail: '',
+  hotelAddress: '',
+  contactPhone: '',
+  website: '',
+  timezone: 'UTC',
+  currency: 'USD',
+  checkInTime: '14:00',
+  checkOutTime: '11:00',
+  bookingConfirmationTemplate: '',
+  enableNotifications: true,
+  maintenanceMode: false,
+};
+
 const Settings = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<'connected' | 'error'>('connected');
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('general');
-  const [formData, setFormData] = useState<SettingsData>({
-    hotelName: '',
-    contactEmail: '',
-    hotelAddress: '',
-    contactPhone: '',
-    website: '',
-    timezone: 'UTC',
-    currency: 'USD',
-    checkInTime: '14:00',
-    checkOutTime: '11:00',
-    bookingConfirmationTemplate: '',
-    enableNotifications: true,
-    maintenanceMode: false,
-  });
+  const [formData, setFormData] = useState<SettingsData>(defaultSettingsData);
+  const [savedFormData, setSavedFormData] = useState<SettingsData>(defaultSettingsData);
+
+  const hasChanges = JSON.stringify(formData) !== JSON.stringify(savedFormData);
 
   useEffect(() => {
     fetchSettings();
   }, []);
 
-  const fetchSettings = async () => {
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!hasChanges) return;
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [hasChanges]);
+
+  const fetchSettings = async (force = false) => {
+    if (!force && hasChanges && !window.confirm('You have unsaved changes. Refreshing will discard them. Continue?')) {
+      return;
+    }
+
     try {
       setLoading(true);
+      setError(null);
       const response = await api.get('/settings');
       const settingsArray = response.data.data || [];
-      
-      const mappedData: SettingsData = {
-        hotelName: '',
-        contactEmail: '',
-        hotelAddress: '',
-        contactPhone: '',
-        website: '',
-        timezone: 'UTC',
-        currency: 'USD',
-        checkInTime: '14:00',
-        checkOutTime: '11:00',
-        bookingConfirmationTemplate: '',
-        enableNotifications: true,
-        maintenanceMode: false,
-      };
+      const mappedData: SettingsData = { ...defaultSettingsData };
 
       settingsArray.forEach((item: any) => {
         switch(item.key) {
@@ -99,7 +105,10 @@ const Settings = () => {
       });
 
       setFormData(mappedData);
+      setSavedFormData(mappedData);
+      setConnectionStatus('connected');
     } catch (err: any) {
+      setConnectionStatus('error');
       setError('Failed to load settings. Please try again later.');
       console.error('Fetch settings error:', err);
     } finally {
@@ -140,14 +149,25 @@ const Settings = () => {
       };
 
       await api.put('/settings', payload);
+      setSavedFormData(formData);
+      setConnectionStatus('connected');
+      setLastSavedAt(new Date().toISOString());
       setSuccess('Settings updated successfully!');
       
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save settings. Please try again.');
+      setConnectionStatus('error');
+      setError(err.response?.data?.message || err.response?.data?.errors?.[0]?.msg || 'Failed to save settings. Please try again.');
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleResetChanges = () => {
+    if (!hasChanges) return;
+    setFormData(savedFormData);
+    setError(null);
+    setSuccess(null);
   };
 
   const tabs = [
@@ -155,7 +175,6 @@ const Settings = () => {
     { id: 'contact', label: 'Contact', icon: EnvelopeIcon },
     { id: 'operations', label: 'Operations', icon: ClockIcon },
     { id: 'notifications', label: 'Notifications', icon: BellIcon },
-    { id: 'security', label: 'Security', icon: ShieldCheckIcon },
   ];
 
   if (loading) {
@@ -182,7 +201,9 @@ const Settings = () => {
           </div>
           <div className="flex gap-3">
             <button
-              onClick={fetchSettings}
+              type="button"
+              onClick={() => fetchSettings()}
+              disabled={loading || saving}
               className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition-all duration-200 shadow-sm"
             >
               <ArrowPathIcon className="h-4 w-4" />
@@ -514,71 +535,27 @@ const Settings = () => {
               </div>
             )}
 
-            {/* Security Settings */}
-            {activeTab === 'security' && (
-              <div className="p-6 space-y-6">
-                <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
-                  <div className="p-2 bg-red-50 rounded-lg">
-                    <ShieldCheckIcon className="h-6 w-6 text-red-600" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-900">Security Settings</h2>
-                    <p className="text-sm text-gray-500">Manage security and access controls</p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="p-4 border border-gray-200 rounded-xl">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <KeyIcon className="h-5 w-5 text-gray-600" />
-                        <div>
-                          <p className="font-medium text-gray-900">Two-Factor Authentication</p>
-                          <p className="text-sm text-gray-500">Add an extra layer of security to your account</p>
-                        </div>
-                      </div>
-                      <button className="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
-                        Enable
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="p-4 border border-gray-200 rounded-xl">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <UserGroupIcon className="h-5 w-5 text-gray-600" />
-                        <div>
-                          <p className="font-medium text-gray-900">Session Management</p>
-                          <p className="text-sm text-gray-500">View and manage active sessions</p>
-                        </div>
-                      </div>
-                      <button className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
-                        Logout All Devices
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="p-4 border border-gray-200 rounded-xl">
-                    <div className="flex items-center gap-3 mb-3">
-                      <DocumentTextIcon className="h-5 w-5 text-gray-600" />
-                      <div>
-                        <p className="font-medium text-gray-900">Audit Logs</p>
-                        <p className="text-sm text-gray-500">Track all admin activities and changes</p>
-                      </div>
-                    </div>
-                    <button className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-                      Download Audit Logs
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Form Actions */}
-            <div className="border-t border-gray-100 px-6 py-4 bg-gray-50 flex justify-end">
+            <div className="border-t border-gray-100 px-6 py-4 bg-gray-50 flex justify-between gap-3">
+              <div className="flex items-center text-sm">
+                {hasChanges ? (
+                  <span className="text-amber-600 font-medium">You have unsaved changes</span>
+                ) : (
+                  <span className="text-gray-500">All changes saved</span>
+                )}
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={handleResetChanges}
+                  disabled={!hasChanges || saving}
+                  className="inline-flex items-center gap-2 border border-gray-200 bg-white px-4 py-2.5 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Reset Changes
+                </button>
               <button
                 type="submit"
-                disabled={saving}
+                disabled={saving || loading || !hasChanges}
                 className="inline-flex items-center gap-2 bg-gradient-to-r from-slate-900 to-slate-800 text-white px-6 py-2.5 rounded-xl font-medium hover:from-slate-800 hover:to-slate-700 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? (
@@ -593,6 +570,7 @@ const Settings = () => {
                   </>
                 )}
               </button>
+              </div>
             </div>
           </div>
         </form>
@@ -605,10 +583,14 @@ const Settings = () => {
               <span className="text-sm font-medium text-gray-700">System Status</span>
             </div>
             <div className="flex items-center gap-4 text-sm">
-              <span className="text-gray-500">Last updated: {new Date().toLocaleString()}</span>
+              <span className="text-gray-500">
+                Last saved: {lastSavedAt ? new Date(lastSavedAt).toLocaleString() : 'Not yet saved'}
+              </span>
               <span className="inline-flex items-center gap-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-green-600 font-medium">Connected</span>
+                <div className={`w-2 h-2 rounded-full ${connectionStatus === 'connected' ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
+                <span className={connectionStatus === 'connected' ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
+                  {connectionStatus === 'connected' ? 'Connected' : 'Connection issue'}
+                </span>
               </span>
             </div>
           </div>

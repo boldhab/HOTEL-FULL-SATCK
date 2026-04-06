@@ -6,10 +6,17 @@ import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { Button } from "@/components/ui/actions/button";
 import { ImageWithFallback } from "@/components/media/ImageWithFallback";
 import { apiClient } from "@/lib/api";
+import type { PublicSettings } from "@/lib/settings";
 
 const heroImage = "/images/contact_hero.png";
 
-export function Contact() {
+type ContactProps = {
+  settings: PublicSettings;
+};
+
+const normalizePhoneHref = (value: string) => `tel:${value.replace(/[^\d+]/g, "")}`;
+
+export function Contact({ settings }: ContactProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -93,24 +100,24 @@ export function Contact() {
               {
                 icon: MapPin,
                 title: "Address",
-                content: "Bole Road, Debre Birhan, Ethiopia",
+                content: settings.hotelAddress,
               },
               {
                 icon: Phone,
                 title: "Phone",
-                content: "+251 911 234 567",
-                link: "tel:+251911234567",
+                content: settings.contactPhone,
+                link: normalizePhoneHref(settings.contactPhone),
               },
               {
                 icon: Mail,
                 title: "Email",
-                content: "info@ethiobernohotel.com",
-                link: "mailto:info@ethiobernohotel.com",
+                content: settings.contactEmail,
+                link: `mailto:${settings.contactEmail}`,
               },
               {
                 icon: Clock,
-                title: "Reception Hours",
-                content: "24/7 Available",
+                title: "Check-in / Check-out",
+                content: `${settings.checkInTime} / ${settings.checkOutTime}`,
               },
             ].map((item, index) => (
               <motion.div

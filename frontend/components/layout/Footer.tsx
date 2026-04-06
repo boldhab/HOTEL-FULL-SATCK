@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import type { PublicSettings } from "@/lib/settings";
 
-export function Footer() {
+type FooterProps = {
+  settings: PublicSettings;
+};
+
+const normalizePhoneHref = (value: string) => `tel:${value.replace(/[^\d+]/g, "")}`;
+
+export function Footer({ settings }: FooterProps) {
   return (
     <footer className="bg-[#1e3a5f] text-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -9,7 +16,7 @@ export function Footer() {
           {/* About */}
           <div>
             <div className="mb-4">
-              <h3 className="text-2xl font-serif text-[#c9a961] mb-1">Ethio Bernos</h3>
+              <h3 className="text-2xl font-serif text-[#c9a961] mb-1">{settings.hotelName}</h3>
               <p className="text-xs tracking-widest text-gray-300 uppercase">Hotel</p>
             </div>
             <p className="text-sm text-gray-300 leading-relaxed">
@@ -61,12 +68,8 @@ export function Footer() {
               <li className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-[#c9a961] flex-shrink-0 mt-0.5" />
                 <span className="text-sm text-gray-300">
-                  Debre Berhan, Ethiopia
+                  {settings.hotelAddress}
                 </span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-[#c9a961] flex-shrink-0" />
-                <span className="text-sm text-gray-300">Ethio Bernos on Map</span>
               </li>
             </ul>
 
@@ -74,28 +77,24 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-[#c9a961] flex-shrink-0" />
-                <a href="tel:+251116375686" className="text-sm text-gray-300 hover:text-[#c9a961] transition-colors">
-                  Tel: +251-116-375686/6679
+                <a href={normalizePhoneHref(settings.contactPhone)} className="text-sm text-gray-300 hover:text-[#c9a961] transition-colors">
+                  {settings.contactPhone}
                 </a>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-[#c9a961] flex-shrink-0" />
-                <a href="tel:+251930362151" className="text-sm text-gray-300 hover:text-[#c9a961] transition-colors">
-                  Mob: +251-930-362151
-                </a>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-[#c9a961] flex-shrink-0" />
-                <span className="text-sm text-gray-300">
-                  Fax: +251-116-376719
-                </span>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-[#c9a961] flex-shrink-0" />
-                <a href="mailto:ethiobernoshotel@gmail.com" className="text-sm text-gray-300 hover:text-[#c9a961] transition-colors">
-                  Email: ethiobernoshotel@gmail.com
+                <a href={`mailto:${settings.contactEmail}`} className="text-sm text-gray-300 hover:text-[#c9a961] transition-colors">
+                  {settings.contactEmail}
                 </a>
               </li>
+              {settings.website && (
+                <li className="flex items-center space-x-3">
+                  <Mail className="h-5 w-5 text-[#c9a961] flex-shrink-0" />
+                  <a href={settings.website} className="text-sm text-gray-300 hover:text-[#c9a961] transition-colors" target="_blank" rel="noreferrer">
+                    Visit Website
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
 
@@ -152,7 +151,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-white/10 text-center">
           <p className="text-sm text-gray-400">
-            &copy; {new Date().getFullYear()} Ethio Bernos Hotel. All rights reserved.
+            &copy; {new Date().getFullYear()} {settings.hotelName}. All rights reserved.
           </p>
         </div>
       </div>

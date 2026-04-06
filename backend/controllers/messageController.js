@@ -1,6 +1,7 @@
 const messageService = require('../services/messageService');
 const { sendMessageReply } = require('../services/emailService');
 const { logAdminAction } = require('../services/auditService');
+const { getSettingsMap } = require('../services/settingsService');
 const asyncHandler = require('../utils/asyncHandler');
 
 const escapeHtml = (value = '') =>
@@ -49,8 +50,11 @@ exports.submitMessage = asyncHandler(async (req, res) => {
 
   // Notify admin via email
   try {
-    const adminEmail = process.env.ADMIN_EMAIL || process.env.SMTP_USER;
-    if (adminEmail) {
+    const settings = await getSettingsMap();
+    const notificationsEnabled = settings.enable_notifications !== false && settings.enable_notifications !== 'false';
+    const adminEmail = settings.contact_email || process.env.ADMIN_EMAIL || process.env.SMTP_USER;
+
+    if (notificationsEnabled && adminEmail) {
       const readableSubject = formatSubject(subject);
       const safeName = escapeHtml(name);
       const safeEmail = escapeHtml(email);
@@ -85,6 +89,8 @@ exports.submitMessage = asyncHandler(async (req, res) => {
       console.log(
         `[contact] Admin email sent: messageId=${message.id} to=${adminEmail} smtpId=${info.messageId || 'n/a'}`
       );
+    } else if (!notificationsEnabled) {
+      console.warn(`[contact] Email skipped: notifications disabled for messageId=${message.id}`);
     } else {
       console.warn(
         `[contact] Email skipped: no ADMIN_EMAIL or SMTP_USER configured for messageId=${message.id}`
