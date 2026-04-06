@@ -211,7 +211,13 @@ const defaultGallery = [
 ];
 const HOME_ROOM_LIMIT = 4;
 
-export function Home({ initialData = { rooms: [], gallery: [], services: [] } }: { initialData?: any }) {
+export function Home({
+  initialData = { rooms: [], gallery: [], services: [] },
+  currencyCode = "ETB",
+}: {
+  initialData?: any;
+  currencyCode?: string;
+}) {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const { scrollYProgress } = useScroll();
   const heroRef = useRef<HTMLElement>(null);
@@ -617,7 +623,7 @@ export function Home({ initialData = { rooms: [], gallery: [], services: [] } }:
 
           <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 mb-12">
             {displayRooms.map((room: any, index: number) => (
-              <RoomCard key={room.id} {...room} index={index} />
+              <RoomCard key={room.id} {...room} currencyCode={currencyCode} index={index} />
             ))}
           </div>
 

@@ -18,7 +18,6 @@ import {
 import api from '../services/api';
 
 interface SettingsData {
-  hotelName: string;
   contactEmail: string;
   hotelAddress: string;
   contactPhone?: string;
@@ -33,13 +32,12 @@ interface SettingsData {
 }
 
 const defaultSettingsData: SettingsData = {
-  hotelName: '',
   contactEmail: '',
   hotelAddress: '',
   contactPhone: '',
   website: '',
   timezone: 'UTC',
-  currency: 'USD',
+  currency: 'ETB',
   checkInTime: '14:00',
   checkOutTime: '11:00',
   bookingConfirmationTemplate: '',
@@ -89,7 +87,6 @@ const Settings = () => {
 
       settingsArray.forEach((item: any) => {
         switch(item.key) {
-          case 'hotel_name': mappedData.hotelName = item.value; break;
           case 'contact_email': mappedData.contactEmail = item.value; break;
           case 'hotel_address': mappedData.hotelAddress = item.value; break;
           case 'contact_phone': mappedData.contactPhone = item.value; break;
@@ -134,7 +131,6 @@ const Settings = () => {
 
     try {
       const payload = {
-        hotel_name: formData.hotelName,
         contact_email: formData.contactEmail,
         hotel_address: formData.hotelAddress,
         contact_phone: formData.contactPhone,
@@ -269,24 +265,6 @@ const Settings = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Hotel Name <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <BuildingOfficeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
-                        type="text"
-                        name="hotelName"
-                        value={formData.hotelName}
-                        onChange={handleInputChange}
-                        className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all"
-                        placeholder="Enter hotel name"
-                        required
-                      />
-                    </div>
-                  </div>
-
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Website

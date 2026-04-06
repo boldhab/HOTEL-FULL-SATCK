@@ -19,6 +19,7 @@ import {
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/actions/button";
 import { ImageWithFallback } from "@/components/media/ImageWithFallback";
+import { formatRoomPrice } from "@/lib/currency";
 
 interface RoomCardProps {
   id: string;
@@ -39,6 +40,7 @@ interface RoomCardProps {
   locationNote?: string;
   isFeatured?: boolean;
   index?: number;
+  currencyCode?: string;
 }
 
 const featureIcons: Record<string, any> = {
@@ -84,6 +86,7 @@ export function RoomCard({
   locationNote = "Bole Road, Debre Birhan",
   isFeatured = false,
   index = 0,
+  currencyCode = "ETB",
 }: RoomCardProps) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
@@ -106,6 +109,7 @@ export function RoomCard({
       ];
 
   const occupancyLabel = occupancy || `${maxGuests} adults`;
+  const formattedPrice = formatRoomPrice(price, currencyCode);
 
   const nextImage = () => {
     setActiveImage((prev) => (prev + 1) % roomGallery.length);
@@ -132,7 +136,7 @@ export function RoomCard({
           />
           <div className="absolute top-4 right-4 bg-[#c9a961] text-white px-4 py-2 rounded-md text-right">
             <span className="text-xs uppercase tracking-wide">Starting at</span>
-            <span className="block text-xl font-semibold">${price}</span>
+            <span className="block text-xl font-semibold">{formattedPrice}</span>
             <span className="text-xs">/ night</span>
           </div>
           {isFeatured && (
@@ -281,7 +285,7 @@ export function RoomCard({
                     <div><span className="font-medium">Bed:</span> {bedType}</div>
                     <div><span className="font-medium">View:</span> {viewType}</div>
                     <div><span className="font-medium">Max Occupancy:</span> {occupancyLabel}</div>
-                    <div><span className="font-medium">Rate:</span> Starting at ${price}/night</div>
+                    <div><span className="font-medium">Rate:</span> Starting at {formattedPrice}/night</div>
                   </div>
                 </div>
 

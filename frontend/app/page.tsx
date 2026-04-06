@@ -1,5 +1,6 @@
 import { Home } from "@/features/pages/Home";
 import { fetchCollection } from "@/lib/api";
+import { getPublicSettings } from "@/lib/settings";
 
 async function getHomeData() {
   const [rooms, gallery, services] = await Promise.all([
@@ -12,6 +13,6 @@ async function getHomeData() {
 }
 
 export default async function Page() {
-  const data = await getHomeData();
-  return <Home initialData={data} />;
+  const [data, settings] = await Promise.all([getHomeData(), getPublicSettings()]);
+  return <Home initialData={data} currencyCode={settings.currency} />;
 }

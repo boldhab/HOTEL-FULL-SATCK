@@ -195,7 +195,13 @@ const amenitiesList = [
   { icon: Clock, name: "24/7 Service", description: "Room service available" },
 ];
 
-export function Rooms({ initialRooms = [] }: { initialRooms?: any[] }) {
+export function Rooms({
+  initialRooms = [],
+  currencyCode = "ETB",
+}: {
+  initialRooms?: any[];
+  currencyCode?: string;
+}) {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -356,7 +362,7 @@ export function Rooms({ initialRooms = [] }: { initialRooms?: any[] }) {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 lg:gap-12">
             {displayRooms.map((room: any, index: number) => (
-              <RoomCard key={room.id} {...room} index={index} />
+              <RoomCard key={room.id} {...room} currencyCode={currencyCode} index={index} />
             ))}
           </div>
         </div>
