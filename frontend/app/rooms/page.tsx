@@ -9,5 +9,5 @@ async function getRooms() {
 
 export default async function Page() {
   const [rooms, settings] = await Promise.all([getRooms(), getPublicSettings()]);
-  return <Rooms initialRooms={rooms} currencyCode={settings.currency} />;
+  return <Rooms initialRooms={rooms} currencyCode={settings.currency} settings={settings} />;
 }

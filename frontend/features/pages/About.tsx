@@ -1,9 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { motion, useScroll, useTransform } from "motion/react";
 import { Award, Users, Heart, Target, Sparkles, Clock, Shield, Star, ChevronRight, Coffee, Utensils, Hotel, Calendar, Quote, MapPin, Phone, Mail, Globe, Instagram, Facebook, Twitter } from "lucide-react";
 import { ImageWithFallback } from "@/components/media/ImageWithFallback";
 import { useRef } from "react";
+import type { PublicSettings } from "@/lib/settings";
 
 const hotelImage = "/images/about_hotel.png";
 const hotelImage_hero = "/images/about_hotels.png";
@@ -11,8 +13,9 @@ const cafesImage = "/images/about_cafes.png";
 const restourantsImage = "/images/about_restorant.png";
 const restourantsImage1 = "/images/about_restorants.png";
 const eventImage = "/images/about_event.png";
+const normalizePhoneHref = (value: string) => `tel:${value.replace(/[^\d+]/g, "")}`;
 
-export function About() {
+export function About({ settings }: { settings: PublicSettings }) {
   const targetRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
@@ -467,37 +470,52 @@ export function About() {
               Join us and discover why we're Debre Birhan's premier luxury destination
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
-              <button className="px-10 py-4 bg-[#c9a961] text-white rounded-full font-semibold hover:bg-[#b58a4a] transition-all duration-300 transform hover:scale-105 shadow-xl text-lg">
+              <Link href="/booking" className="px-10 py-4 bg-[#c9a961] text-white rounded-full font-semibold hover:bg-[#b58a4a] transition-all duration-300 transform hover:scale-105 shadow-xl text-lg">
                 Book Your Stay
-              </button>
-              <button className="px-10 py-4 border-2 border-[#c9a961] text-[#c9a961] rounded-full font-semibold hover:bg-[#c9a961] hover:text-white transition-all duration-300 text-lg">
+              </Link>
+              <Link href="/contact" className="px-10 py-4 border-2 border-[#c9a961] text-[#c9a961] rounded-full font-semibold hover:bg-[#c9a961] hover:text-white transition-all duration-300 text-lg">
                 Contact Us
-              </button>
+              </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-white/10">
               <div className="flex items-center justify-center gap-3 text-white">
                 <MapPin className="h-5 w-5 text-[#c9a961]" />
-                <span>Debre Birhan, Ethiopia</span>
+                <span>{settings.hotelAddress}</span>
               </div>
               <div className="flex items-center justify-center gap-3 text-white">
                 <Phone className="h-5 w-5 text-[#c9a961]" />
-                <span>+251 123 456 789</span>
+                <a href={normalizePhoneHref(settings.contactPhone)}>{settings.contactPhone}</a>
               </div>
               <div className="flex items-center justify-center gap-3 text-white">
                 <Mail className="h-5 w-5 text-[#c9a961]" />
-                <span>info@ethiobernos.com</span>
+                <a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a>
               </div>
             </div>
             <div className="flex justify-center gap-4 mt-8">
-              <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#c9a961] transition-all cursor-pointer">
+              <a
+                href={settings.facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#c9a961] transition-all cursor-pointer"
+              >
                 <Facebook className="h-5 w-5 text-white" />
-              </div>
-              <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#c9a961] transition-all cursor-pointer">
+              </a>
+              <a
+                href={settings.twitterUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#c9a961] transition-all cursor-pointer"
+              >
                 <Twitter className="h-5 w-5 text-white" />
-              </div>
-              <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#c9a961] transition-all cursor-pointer">
+              </a>
+              <a
+                href={settings.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#c9a961] transition-all cursor-pointer"
+              >
                 <Instagram className="h-5 w-5 text-white" />
-              </div>
+              </a>
             </div>
           </motion.div>
         </div>

@@ -18,12 +18,13 @@ import {
   Hotel
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import api from '../services/api';
 
 const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [notifications] = useState(3);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -57,6 +58,45 @@ const AdminLayout = () => {
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const syncUnreadMessages = async () => {
+      try {
+        const response = await api.get('/messages');
+        const messagesData = Array.isArray(response.data?.data) ? response.data.data : [];
+        const unreadCount = messagesData.filter((message: { isRead?: boolean }) => !message.isRead).length;
+        if (isMounted) {
+          setUnreadMessages(unreadCount);
+        }
+      } catch (error) {
+        console.error('Failed to fetch unread messages count:', error);
+      }
+    };
+
+    const handleUnreadCountChange = (event: Event) => {
+      const customEvent = event as CustomEvent<number>;
+      if (typeof customEvent.detail === 'number') {
+        setUnreadMessages(customEvent.detail);
+        return;
+      }
+      syncUnreadMessages();
+    };
+
+    syncUnreadMessages();
+    window.addEventListener('messages:unread-count-changed', handleUnreadCountChange);
+    window.addEventListener('focus', syncUnreadMessages);
+
+    const pollInterval = window.setInterval(syncUnreadMessages, 30000);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('messages:unread-count-changed', handleUnreadCountChange);
+      window.removeEventListener('focus', syncUnreadMessages);
+      window.clearInterval(pollInterval);
+    };
   }, []);
 
   const handleLogout = () => {
@@ -149,7 +189,7 @@ const AdminLayout = () => {
                     to={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`
-                      flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group
+                      relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group
                       ${isActive 
                         ? 'bg-gradient-to-r from-slate-700 to-slate-800 text-white shadow-lg' 
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
@@ -161,11 +201,23 @@ const AdminLayout = () => {
                     </span>
                     {isSidebarOpen && (
                       <div className="flex-1">
-                        <div className="font-medium">{item.title}</div>
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="font-medium">{item.title}</div>
+                          {item.path === '/messages' && unreadMessages > 0 && (
+                            <span className="inline-flex min-w-[1.5rem] items-center justify-center rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white">
+                              {unreadMessages > 99 ? '99+' : unreadMessages}
+                            </span>
+                          )}
+                        </div>
                         <div className="text-xs text-slate-500 group-hover:text-slate-400 transition-colors">
                           {item.description}
                         </div>
                       </div>
+                    )}
+                    {!isSidebarOpen && item.path === '/messages' && unreadMessages > 0 && (
+                      <span className="absolute right-2 top-2 inline-flex min-w-[1.1rem] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white">
+                        {unreadMessages > 99 ? '99+' : unreadMessages}
+                      </span>
                     )}
                     {isActive && isSidebarOpen && (
                       <div className="w-1 h-8 bg-amber-400 rounded-full" />
@@ -252,10 +304,15 @@ const AdminLayout = () => {
               <div className="relative">
                 <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                   <Bell size={20} className="text-gray-600 dark:text-gray-400" />
-                  {notifications > 0 && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full">
-                      <span className="animate-ping absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full opacity-75" />
-                    </span>
+                  {unreadMessages > 0 && (
+                    <>
+                      <span className="absolute -top-1 -right-1 min-w-[1.2rem] h-5 px-1 flex items-center justify-center rounded-full bg-red-500 text-[11px] font-semibold text-white shadow-sm">
+                        {unreadMessages > 99 ? '99+' : unreadMessages}
+                      </span>
+                      <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full">
+                        <span className="animate-ping absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full opacity-75" />
+                      </span>
+                    </>
                   )}
                 </button>
               </div>

@@ -12,9 +12,12 @@ import { RoomCard } from "@/components/features/RoomCard";
 import { ServiceCard } from "@/components/features/ServiceCard";
 import { ImageWithFallback } from "@/components/media/ImageWithFallback";
 import { useState, useEffect, useRef } from "react";
+import type { PublicSettings } from "@/lib/settings";
 
 const heroImage = "/images/service_hero1.png";
 const aboutImage = "/images/about_hotel.png";
+const overviewRoomImages = ["/images/room1.png", "/images/room2.png", "/images/room3.png", "/images/room4.png"];
+const overviewRoomNames = ["ROOM1", "ROOM2", "ROOM3", "ROOM4"];
 
 const fallbackRooms = [
   {
@@ -210,13 +213,16 @@ const defaultGallery = [
   "/images/overview_gallery4.png",
 ];
 const HOME_ROOM_LIMIT = 4;
+const normalizePhoneHref = (value: string) => `tel:${value.replace(/[^\d+]/g, "")}`;
 
 export function Home({
   initialData = { rooms: [], gallery: [], services: [] },
   currencyCode = "ETB",
+  settings,
 }: {
   initialData?: any;
   currencyCode?: string;
+  settings: PublicSettings;
 }) {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const { scrollYProgress } = useScroll();
@@ -232,7 +238,7 @@ export function Home({
           const bTime = b?.createdAt ? new Date(b.createdAt).getTime() : 0;
           return bTime - aTime;
         })
-        .slice(0, HOME_ROOM_LIMIT)
+      .slice(0, HOME_ROOM_LIMIT)
     : [];
   const hasUsableRoomData = roomRecords.some((r: any) => {
     if (!r || typeof r !== "object") return false;
@@ -242,14 +248,21 @@ export function Home({
   const displayRooms = hasUsableRoomData
     ? fallbackRooms.slice(0, HOME_ROOM_LIMIT).map((fallbackRoom, index) => {
         const r = roomRecords[index];
+        const overviewImage = overviewRoomImages[index % overviewRoomImages.length];
+        const overviewName = overviewRoomNames[index % overviewRoomNames.length];
         if (!r || typeof r !== "object") {
-          return fallbackRoom;
+          return {
+            ...fallbackRoom,
+            name: overviewName,
+            image: overviewImage,
+            gallery: [overviewImage, ...fallbackRoom.gallery.filter((image) => image !== overviewImage)],
+          };
         }
 
         return {
           id: r.id || fallbackRoom.id,
-          name: r.name || fallbackRoom.name,
-          image: r.images?.[0] || fallbackRoom.image,
+          name: overviewName,
+          image: overviewImage,
           description: r.description || fallbackRoom.description,
           features: Array.isArray(r.features) && r.features.length > 0 ? r.features : fallbackRoom.features,
           price: typeof r.price === "number" ? r.price : fallbackRoom.price,
@@ -261,11 +274,20 @@ export function Home({
           tagline: r.tagline || fallbackRoom.tagline,
           amenities: Array.isArray(r.amenities) && r.amenities.length > 0 ? r.amenities : fallbackRoom.amenities,
           policies: Array.isArray(r.policies) && r.policies.length > 0 ? r.policies : fallbackRoom.policies,
-          gallery: Array.isArray(r.images) && r.images.length > 0 ? r.images : fallbackRoom.gallery,
+          gallery: [overviewImage, ...(Array.isArray(r.images) && r.images.length > 0 ? r.images.filter((image: string) => image !== overviewImage) : fallbackRoom.gallery.filter((image) => image !== overviewImage))],
           isFeatured: typeof r.isFeatured === "boolean" ? r.isFeatured : Boolean(fallbackRoom.isFeatured),
         };
       })
-    : fallbackRooms;
+    : fallbackRooms.slice(0, HOME_ROOM_LIMIT).map((fallbackRoom, index) => {
+        const overviewImage = overviewRoomImages[index % overviewRoomImages.length];
+        const overviewName = overviewRoomNames[index % overviewRoomNames.length];
+        return {
+          ...fallbackRoom,
+          name: overviewName,
+          image: overviewImage,
+          gallery: [overviewImage, ...fallbackRoom.gallery.filter((image) => image !== overviewImage)],
+        };
+      });
 
   const displayGallery = initialData.gallery?.length >= 4 
     ? initialData.gallery.slice(0, 4).map((g: any) => g.imageUrl)
@@ -335,7 +357,7 @@ export function Home({
     },
     {
       question: "How can I contact the hotel quickly?",
-      answer: "You can call us directly at +251-116-375686/6679 or use the contact page for booking, event, and service inquiries."
+      answer: `You can call us directly at ${settings.contactPhone} or use the contact page for booking, event, and service inquiries.`
     }
   ];
 
@@ -373,7 +395,7 @@ export function Home({
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div className="flex flex-col gap-1.5 text-white">
                   <div className="flex flex-wrap items-center gap-2.5">
-                    <span className="text-xs sm:text-sm tracking-[0.18em] text-[#c9a961] uppercase">Ethio Bernos Hotel</span>
+                    <span className="text-xs sm:text-sm tracking-[0.18em] text-[#c9a961] uppercase">{settings.hotelName}</span>
                     <span className="h-1 w-1 rounded-full bg-white/70" />
                     <span className="text-xs sm:text-sm text-white/85">Trusted by travelers in Debre Birhan</span>
                   </div>
@@ -392,14 +414,14 @@ export function Home({
                     </div>
                     <div className="flex items-center gap-1.5 text-white/90">
                       <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#c9a961]" />
-                      <span>Bole Road, Debre Birhan</span>
+                      <span>{settings.hotelAddress}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
                   <a
-                    href="https://maps.google.com/?q=Ethio+Bernos+Hotel+Addis+Ababa"
+                    href={`https://maps.google.com/?q=${encodeURIComponent(settings.hotelAddress || settings.hotelName)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-3 py-1.5 text-xs sm:text-sm font-medium text-white transition hover:bg-white/20"
@@ -408,7 +430,7 @@ export function Home({
                     View Map
                   </a>
                   <a
-                    href="tel:+251116375686"
+                    href={normalizePhoneHref(settings.contactPhone)}
                     className="inline-flex items-center gap-1.5 rounded-full bg-[#c9a961] px-3 py-1.5 text-xs sm:text-sm font-semibold text-white transition hover:bg-[#b89851]"
                   >
                     <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4" />

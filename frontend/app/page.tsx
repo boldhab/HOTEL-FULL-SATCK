@@ -14,5 +14,5 @@ async function getHomeData() {
 
 export default async function Page() {
   const [data, settings] = await Promise.all([getHomeData(), getPublicSettings()]);
-  return <Home initialData={data} currencyCode={settings.currency} />;
+  return <Home initialData={data} currencyCode={settings.currency} settings={settings} />;
 }

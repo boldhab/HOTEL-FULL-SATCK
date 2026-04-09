@@ -22,11 +22,13 @@ interface SettingsData {
   hotelAddress: string;
   contactPhone?: string;
   website?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
+  twitterUrl?: string;
   timezone?: string;
   currency?: string;
   checkInTime?: string;
   checkOutTime?: string;
-  bookingConfirmationTemplate?: string;
   enableNotifications?: boolean;
   maintenanceMode?: boolean;
 }
@@ -36,13 +38,24 @@ const defaultSettingsData: SettingsData = {
   hotelAddress: '',
   contactPhone: '',
   website: '',
+  facebookUrl: '',
+  instagramUrl: '',
+  twitterUrl: '',
   timezone: 'UTC',
   currency: 'ETB',
   checkInTime: '14:00',
   checkOutTime: '11:00',
-  bookingConfirmationTemplate: '',
   enableNotifications: true,
   maintenanceMode: false,
+};
+
+const asBoolean = (value: unknown, fallback = false) => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+  }
+  return fallback;
 };
 
 const Settings = () => {
@@ -91,13 +104,15 @@ const Settings = () => {
           case 'hotel_address': mappedData.hotelAddress = item.value; break;
           case 'contact_phone': mappedData.contactPhone = item.value; break;
           case 'website': mappedData.website = item.value; break;
+          case 'facebook_url': mappedData.facebookUrl = item.value; break;
+          case 'instagram_url': mappedData.instagramUrl = item.value; break;
+          case 'twitter_url': mappedData.twitterUrl = item.value; break;
           case 'timezone': mappedData.timezone = item.value; break;
           case 'currency': mappedData.currency = item.value; break;
           case 'check_in_time': mappedData.checkInTime = item.value; break;
           case 'check_out_time': mappedData.checkOutTime = item.value; break;
-          case 'booking_confirmation_template': mappedData.bookingConfirmationTemplate = item.value; break;
-          case 'enable_notifications': mappedData.enableNotifications = item.value === 'true'; break;
-          case 'maintenance_mode': mappedData.maintenanceMode = item.value === 'true'; break;
+          case 'enable_notifications': mappedData.enableNotifications = asBoolean(item.value, mappedData.enableNotifications); break;
+          case 'maintenance_mode': mappedData.maintenanceMode = asBoolean(item.value, mappedData.maintenanceMode); break;
         }
       });
 
@@ -135,11 +150,13 @@ const Settings = () => {
         hotel_address: formData.hotelAddress,
         contact_phone: formData.contactPhone,
         website: formData.website,
+        facebook_url: formData.facebookUrl,
+        instagram_url: formData.instagramUrl,
+        twitter_url: formData.twitterUrl,
         timezone: formData.timezone,
         currency: formData.currency,
         check_in_time: formData.checkInTime,
         check_out_time: formData.checkOutTime,
-        booking_confirmation_template: formData.bookingConfirmationTemplate,
         enable_notifications: formData.enableNotifications,
         maintenance_mode: formData.maintenanceMode,
       };
@@ -394,6 +411,57 @@ const Settings = () => {
                       />
                     </div>
                   </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Facebook URL
+                    </label>
+                    <div className="relative">
+                      <GlobeAltIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="url"
+                        name="facebookUrl"
+                        value={formData.facebookUrl}
+                        onChange={handleInputChange}
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all"
+                        placeholder="https://facebook.com/yourhotel"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Instagram URL
+                    </label>
+                    <div className="relative">
+                      <GlobeAltIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="url"
+                        name="instagramUrl"
+                        value={formData.instagramUrl}
+                        onChange={handleInputChange}
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all"
+                        placeholder="https://instagram.com/yourhotel"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Twitter/X URL
+                    </label>
+                    <div className="relative">
+                      <GlobeAltIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="url"
+                        name="twitterUrl"
+                        value={formData.twitterUrl}
+                        onChange={handleInputChange}
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all"
+                        placeholder="https://twitter.com/yourhotel"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -438,20 +506,6 @@ const Settings = () => {
                     />
                   </div>
 
-                  <div className="lg:col-span-2">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Booking Confirmation Template
-                    </label>
-                    <textarea
-                      name="bookingConfirmationTemplate"
-                      value={formData.bookingConfirmationTemplate}
-                      onChange={handleInputChange}
-                      rows={4}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all resize-none"
-                      placeholder="Thank you for booking with us! Your reservation has been confirmed..."
-                    />
-                    <p className="text-xs text-gray-500 mt-1">This template will be used for booking confirmation emails</p>
-                  </div>
                 </div>
               </div>
             )}
@@ -475,7 +529,7 @@ const Settings = () => {
                       <BellIcon className="h-5 w-5 text-gray-600" />
                       <div>
                         <p className="font-medium text-gray-900">Enable Email Notifications</p>
-                        <p className="text-sm text-gray-500">Receive email alerts for new bookings and messages</p>
+                        <p className="text-sm text-gray-500">Receive email alerts for new contact form messages sent to the hotel</p>
                       </div>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">

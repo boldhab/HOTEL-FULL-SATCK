@@ -46,6 +46,11 @@ const normalizeMessage = (message: MessageItem, idx: number): MessageItem => ({
   source: message.source || (['contact', 'booking', 'feedback', 'support'][idx % 4] as MessageItem['source']),
 });
 
+const broadcastUnreadCount = (messages: MessageItem[]) => {
+  const unreadCount = messages.filter(message => !message.isRead).length;
+  window.dispatchEvent(new CustomEvent('messages:unread-count-changed', { detail: unreadCount }));
+};
+
 const formatDate = (value: string) => {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
@@ -74,6 +79,7 @@ const Messages = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRead, setFilterRead] = useState<'all' | 'read' | 'unread'>('all');
   const [filterSource, setFilterSource] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'unread' | 'starred'>('unread');
   const [selectedMessage, setSelectedMessage] = useState<MessageItem | null>(null);
   const [showReplyModal, setShowReplyModal] = useState(false);
   const [replyText, setReplyText] = useState('');
@@ -90,6 +96,7 @@ const Messages = () => {
         const messagesData = Array.isArray(response.data?.data) ? response.data.data : [];
         const enrichedData = messagesData.map((msg: MessageItem, idx: number) => normalizeMessage(msg, idx));
         setMessages(enrichedData);
+        broadcastUnreadCount(enrichedData);
         setError(null);
       } catch {
         setError('Messages could not be loaded right now.');
@@ -104,9 +111,11 @@ const Messages = () => {
   const handleMarkAsRead = async (messageId: string) => {
     try {
       await api.patch(`/messages/${messageId}/read`, { isRead: true });
-      setMessages(prev =>
-        prev.map(msg => (msg.id === messageId ? { ...msg, isRead: true } : msg))
-      );
+      setMessages(prev => {
+        const nextMessages = prev.map(msg => (msg.id === messageId ? { ...msg, isRead: true } : msg));
+        broadcastUnreadCount(nextMessages);
+        return nextMessages;
+      });
       setSelectedMessage(prev =>
         prev?.id === messageId ? { ...prev, isRead: true } : prev
       );
@@ -129,7 +138,11 @@ const Messages = () => {
     if (window.confirm('Are you sure you want to delete this message?')) {
       try {
         await api.delete(`/messages/${messageId}`);
-        setMessages(prev => prev.filter(msg => msg.id !== messageId));
+        setMessages(prev => {
+          const nextMessages = prev.filter(msg => msg.id !== messageId);
+          broadcastUnreadCount(nextMessages);
+          return nextMessages;
+        });
         if (selectedMessage?.id === messageId) {
           setSelectedMessage(null);
         }
@@ -150,13 +163,15 @@ const Messages = () => {
       alert('Reply sent successfully!');
       setShowReplyModal(false);
       setReplyText('');
-      setMessages(prev =>
-        prev.map(msg =>
+      setMessages(prev => {
+        const nextMessages = prev.map(msg =>
           msg.id === selectedMessage.id
             ? { ...msg, isRead: true, adminReply, repliedAt }
             : msg
-        )
-      );
+        );
+        broadcastUnreadCount(nextMessages);
+        return nextMessages;
+      });
       setSelectedMessage(prev =>
         prev ? { ...prev, isRead: true, adminReply, repliedAt } : prev
       );
@@ -215,8 +230,20 @@ const Messages = () => {
       return matchesSearch && matchesReadStatus && matchesSource;
     })
     .sort((a, b) => {
-      // Sort by unread first, then by date (newest first)
-      if (a.isRead !== b.isRead) return a.isRead ? 1 : -1;
+      if (sortBy === 'oldest') {
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      }
+
+      if (sortBy === 'starred') {
+        if (a.isStarred !== b.isStarred) return a.isStarred ? -1 : 1;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+
+      if (sortBy === 'unread') {
+        if (a.isRead !== b.isRead) return a.isRead ? 1 : -1;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
@@ -330,6 +357,17 @@ const Messages = () => {
               <option value="feedback">Guest Feedback</option>
               <option value="support">Support Request</option>
             </select>
+
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'newest' | 'oldest' | 'unread' | 'starred')}
+              className="px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-500 bg-white cursor-pointer"
+            >
+              <option value="unread">Sort: Unread First</option>
+              <option value="newest">Sort: Newest First</option>
+              <option value="oldest">Sort: Oldest First</option>
+              <option value="starred">Sort: Starred First</option>
+            </select>
           </div>
         </div>
 
@@ -386,6 +424,16 @@ const Messages = () => {
                             <h3 className={`font-semibold ${!message.isRead ? 'text-gray-900' : 'text-gray-700'}`}>
                               {message.name}
                             </h3>
+                            <span
+                              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
+                                message.isRead
+                                  ? 'bg-emerald-50 text-emerald-700'
+                                  : 'bg-amber-50 text-amber-700'
+                              }`}
+                            >
+                              {message.isRead ? <MailOpen className="h-3 w-3" /> : <Mail className="h-3 w-3" />}
+                              {message.isRead ? 'Read' : 'Unread'}
+                            </span>
                             {!message.isRead && (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-100 text-slate-700 rounded-full text-xs font-medium">
                                 <Mail className="h-3 w-3" />
@@ -482,6 +530,18 @@ const Messages = () => {
                       </div>
                       <span className="text-xs text-gray-400">
                         {new Date(selectedMessage.createdAt).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="mb-4 flex items-center gap-2">
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${
+                          selectedMessage.isRead
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'bg-amber-50 text-amber-700'
+                        }`}
+                      >
+                        {selectedMessage.isRead ? <MailOpen className="h-3.5 w-3.5" /> : <Mail className="h-3.5 w-3.5" />}
+                        {selectedMessage.isRead ? 'Message has been read' : 'Message is unread'}
                       </span>
                     </div>
                     {selectedMessage.subject && (

@@ -103,7 +103,7 @@ export function Footer({ settings }: FooterProps) {
             <h4 className="text-lg mb-4 text-[#c9a961]">Follow Us</h4>
             <div className="flex space-x-4">
               <a
-                href="https://facebook.com"
+                href={settings.facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#c9a961] transition-colors"
@@ -112,7 +112,7 @@ export function Footer({ settings }: FooterProps) {
                 <Facebook className="h-5 w-5" />
               </a>
               <a
-                href="https://instagram.com"
+                href={settings.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#c9a961] transition-colors"
@@ -121,7 +121,7 @@ export function Footer({ settings }: FooterProps) {
                 <Instagram className="h-5 w-5" />
               </a>
               <a
-                href="https://twitter.com"
+                href={settings.twitterUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#c9a961] transition-colors"

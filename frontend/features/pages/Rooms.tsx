@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { RoomCard } from "@/components/features/RoomCard";
 import { ImageWithFallback } from "@/components/media/ImageWithFallback";
 import { useRef } from "react";
+import type { PublicSettings } from "@/lib/settings";
 import { 
   Wifi, 
   Tv, 
@@ -24,6 +25,9 @@ import {
 } from "lucide-react";
 
 const heroImage = "https://images.unsplash.com/photo-1759223198981-661cadbbff36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMGJlZHJvb20lMjBzdWl0ZXxlbnwxfHx8fDE3NzM4OTMwMTV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
+const roomPageImages = ["/images/room1.png", "/images/room2.png", "/images/room3.png", "/images/room4.png"];
+const roomPageNames = ["ROOM1", "ROOM2", "ROOM3", "ROOM4"];
+const ROOM_PAGE_LIMIT = 4;
 
 // Fallback hardcoded rooms incase backend is down
 const fallbackRooms = [
@@ -194,13 +198,16 @@ const amenitiesList = [
   { icon: Bath, name: "Luxury Bathroom", description: "Rain shower & amenities" },
   { icon: Clock, name: "24/7 Service", description: "Room service available" },
 ];
+const normalizePhoneHref = (value: string) => `tel:${value.replace(/[^\d+]/g, "")}`;
 
 export function Rooms({
   initialRooms = [],
   currencyCode = "ETB",
+  settings,
 }: {
   initialRooms?: any[];
   currencyCode?: string;
+  settings: PublicSettings;
 }) {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -210,7 +217,7 @@ export function Rooms({
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1]);
 
-  const roomRecords = Array.isArray(initialRooms) ? initialRooms : [];
+  const roomRecords = Array.isArray(initialRooms) ? initialRooms.slice(0, ROOM_PAGE_LIMIT) : [];
   const hasUsableRoomData = roomRecords.some((r: any) => {
     if (!r || typeof r !== "object") return false;
     return Boolean(r.name || r.description || r.price || r.capacity || (Array.isArray(r.images) && r.images.length > 0));
@@ -219,10 +226,12 @@ export function Rooms({
   const displayRooms = hasUsableRoomData
     ? roomRecords.map((r: any, index: number) => {
         const fallbackRoom = fallbackRooms[index % fallbackRooms.length];
+        const roomImage = roomPageImages[index % roomPageImages.length];
+        const roomName = roomPageNames[index % roomPageNames.length];
         return {
           id: r.id || fallbackRoom.id,
-          name: r.name || fallbackRoom.name,
-          image: r.images?.[0] || fallbackRoom.image,
+          name: roomName,
+          image: roomImage,
           description: r.description || fallbackRoom.description,
           features: Array.isArray(r.features) && r.features.length > 0 ? r.features : fallbackRoom.features,
           price: typeof r.price === "number" ? r.price : fallbackRoom.price,
@@ -234,11 +243,20 @@ export function Rooms({
           tagline: r.tagline || fallbackRoom.tagline,
           amenities: Array.isArray(r.amenities) && r.amenities.length > 0 ? r.amenities : fallbackRoom.amenities,
           policies: Array.isArray(r.policies) && r.policies.length > 0 ? r.policies : fallbackRoom.policies,
-          gallery: Array.isArray(r.images) && r.images.length > 0 ? r.images : fallbackRoom.gallery,
+          gallery: [roomImage, ...(Array.isArray(r.images) && r.images.length > 0 ? r.images.filter((image: string) => image !== roomImage) : fallbackRoom.gallery.filter((image) => image !== roomImage))],
           isFeatured: typeof r.isFeatured === "boolean" ? r.isFeatured : Boolean(fallbackRoom.isFeatured),
         };
       })
-    : fallbackRooms;
+    : fallbackRooms.slice(0, ROOM_PAGE_LIMIT).map((fallbackRoom, index) => {
+        const roomImage = roomPageImages[index % roomPageImages.length];
+        const roomName = roomPageNames[index % roomPageNames.length];
+        return {
+          ...fallbackRoom,
+          name: roomName,
+          image: roomImage,
+          gallery: [roomImage, ...fallbackRoom.gallery.filter((image) => image !== roomImage)],
+        };
+      });
 
   return (
     <div className="overflow-hidden">
@@ -481,10 +499,10 @@ export function Rooms({
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <a
-                href="tel:+251911234567"
+                href={normalizePhoneHref(settings.contactPhone)}
                 className="inline-flex items-center justify-center px-8 py-3 border-2 border-[#c9a961] text-[#c9a961] hover:bg-[#c9a961] hover:text-white rounded-full transition-all duration-300 font-semibold"
               >
-                Call +251 911 234 567
+                Call {settings.contactPhone}
               </a>
             </div>
             <p className="text-sm text-gray-500 mt-6">

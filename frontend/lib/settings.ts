@@ -6,6 +6,9 @@ export type PublicSettings = {
   hotelAddress: string;
   contactPhone: string;
   website: string;
+  facebookUrl: string;
+  instagramUrl: string;
+  twitterUrl: string;
   timezone: string;
   currency: string;
   checkInTime: string;
@@ -21,6 +24,9 @@ const defaultSettings: PublicSettings = {
   hotelAddress: "Debre Berhan, Ethiopia",
   contactPhone: "+251-930-362151",
   website: "",
+  facebookUrl: "https://facebook.com",
+  instagramUrl: "https://instagram.com",
+  twitterUrl: "https://twitter.com",
   timezone: "UTC",
   currency: "ETB",
   checkInTime: "14:00",
@@ -67,6 +73,15 @@ export async function getPublicSettings(): Promise<PublicSettings> {
         break;
       case "website":
         mapped.website = asString(item.value, mapped.website);
+        break;
+      case "facebook_url":
+        mapped.facebookUrl = asString(item.value, mapped.facebookUrl);
+        break;
+      case "instagram_url":
+        mapped.instagramUrl = asString(item.value, mapped.instagramUrl);
+        break;
+      case "twitter_url":
+        mapped.twitterUrl = asString(item.value, mapped.twitterUrl);
         break;
       case "timezone":
         mapped.timezone = asString(item.value, mapped.timezone);
