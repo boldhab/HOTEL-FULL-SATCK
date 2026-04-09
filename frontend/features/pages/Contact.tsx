@@ -9,6 +9,8 @@ import { apiClient } from "@/lib/api";
 import type { PublicSettings } from "@/lib/settings";
 
 const heroImage = "/images/contact_hero.png";
+const mapEmbedQuery = encodeURIComponent("Ethio Bernos Hotel, Debre Berhan, Ethiopia");
+const mapEmbedUrl = `https://www.google.com/maps?q=${mapEmbedQuery}&z=17&output=embed`;
 
 type ContactProps = {
   settings: PublicSettings;
@@ -304,7 +306,7 @@ export function Contact({ settings }: ContactProps) {
               {/* Embedded Google Map */}
               <div className="rounded-lg overflow-hidden shadow-lg mb-6">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.3149817245975!2d38.76327931477975!3d9.030845093469997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b85f3b6c6e5a7%3A0x8c2b3c8c8c8c8c8c!2sBole%20Road%2C%20Addis%20Ababa!5e0!3m2!1sen!2set!4v1234567890123!5m2!1sen!2set"
+                  src={mapEmbedUrl}
                   width="100%"
                   height="400"
                   style={{ border: 0 }}

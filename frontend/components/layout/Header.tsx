@@ -12,10 +12,9 @@ import type { PublicSettings } from "@/lib/settings";
 // Constants
 const NAV_LINKS = [
   { name: "Overview", path: "/" },
-  { name: "About Us", path: "/about" },
   { name: "Rooms", path: "/rooms" },
-  { name: "Services", path: "/services" },
-  { name: "Gallery", path: "/gallery" },
+  { name: "Service", path: "/services" },
+  { name: "About", path: "/about" },
   { name: "Contact", path: "/contact" },
 ] as const;
 
@@ -33,9 +32,8 @@ export function Header({ settings }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   const { scrollY } = useScroll();
-  const isHomePage = pathname === "/";
-  const showSolidHeader = !isHomePage || isScrolled || isMenuOpen;
-  const headerBackground = isHomePage && !showSolidHeader
+  const showSolidHeader = isScrolled || isMenuOpen;
+  const headerBackground = !showSolidHeader
     ? "rgba(44, 30, 24, 0.88)"
     : "rgba(92, 62, 46, 0.95)";
 
@@ -45,8 +43,7 @@ export function Header({ settings }: HeaderProps) {
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      const homeThreshold = Math.max(window.innerHeight - HOME_HEADER_OFFSET, SCROLL_THRESHOLD);
-      const threshold = pathname === "/" ? homeThreshold : SCROLL_THRESHOLD;
+      const threshold = Math.max(window.innerHeight - HOME_HEADER_OFFSET, SCROLL_THRESHOLD);
       setIsScrolled(window.scrollY > threshold);
     };
 
@@ -57,7 +54,7 @@ export function Header({ settings }: HeaderProps) {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
     };
-  }, [pathname]);
+  }, []);
 
   // Memoized active route checker
   const isActiveRoute = useCallback((path: string) => {
@@ -72,7 +69,7 @@ export function Header({ settings }: HeaderProps) {
         <Link
           key={link.path}
           href={link.path}
-          className="relative px-4 py-2 text-sm font-medium tracking-wide transition-colors duration-300"
+          className="relative px-4 py-2 text-base font-semibold tracking-wide transition-colors duration-300"
         >
           <span className={`relative z-10 ${isActiveRoute(link.path) ? "text-[#E5C98A]" : "text-white hover:text-[#E5C98A]"}`}>
             {link.name}
@@ -232,7 +229,7 @@ export function Header({ settings }: HeaderProps) {
                     href={link.path}
                     className={`
                       flex items-center justify-between py-3 px-4 
-                      text-base font-medium tracking-wide transition-all duration-300 rounded-lg
+                      text-lg font-semibold tracking-wide transition-all duration-300 rounded-lg
                       ${isActiveRoute(link.path)
                         ? "text-[#C9A961] bg-white/5"
                         : "text-white/90 hover:text-[#C9A961] hover:bg-white/5"

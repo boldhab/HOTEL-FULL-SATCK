@@ -102,9 +102,9 @@ export function Services({ initialServices = [] }: { initialServices?: any[] }) 
   ];
 
   const eventGallery = [
-    "/images/about_event.png",
-    "/images/gallery_1.png",
-    "/images/meeting_hall1.png",
+    "/images/event1.png",
+    "/images/event2.png",
+    "/images/event4.png",
   ];
 
   const amenityHighlights = [

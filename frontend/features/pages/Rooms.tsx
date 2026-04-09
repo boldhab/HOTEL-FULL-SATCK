@@ -27,7 +27,7 @@ import {
 const heroImage = "https://images.unsplash.com/photo-1759223198981-661cadbbff36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMGJlZHJvb20lMjBzdWl0ZXxlbnwxfHx8fDE3NzM4OTMwMTV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
 const roomPageImages = ["/images/room1.png", "/images/room2.png", "/images/room3.png", "/images/room4.png"];
 const roomPageNames = ["ROOM1", "ROOM2", "ROOM3", "ROOM4"];
-const ROOM_PAGE_LIMIT = 4;
+const staticRoomNameSet = new Set(roomPageNames);
 
 // Fallback hardcoded rooms incase backend is down
 const fallbackRooms = [
@@ -217,46 +217,50 @@ export function Rooms({
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1]);
 
-  const roomRecords = Array.isArray(initialRooms) ? initialRooms.slice(0, ROOM_PAGE_LIMIT) : [];
+  const roomRecords = Array.isArray(initialRooms) ? initialRooms : [];
   const hasUsableRoomData = roomRecords.some((r: any) => {
     if (!r || typeof r !== "object") return false;
     return Boolean(r.name || r.description || r.price || r.capacity || (Array.isArray(r.images) && r.images.length > 0));
   });
 
-  const displayRooms = hasUsableRoomData
-    ? roomRecords.map((r: any, index: number) => {
-        const fallbackRoom = fallbackRooms[index % fallbackRooms.length];
-        const roomImage = roomPageImages[index % roomPageImages.length];
-        const roomName = roomPageNames[index % roomPageNames.length];
-        return {
-          id: r.id || fallbackRoom.id,
-          name: roomName,
-          image: roomImage,
-          description: r.description || fallbackRoom.description,
-          features: Array.isArray(r.features) && r.features.length > 0 ? r.features : fallbackRoom.features,
-          price: typeof r.price === "number" ? r.price : fallbackRoom.price,
-          maxGuests: typeof r.capacity === "number" ? r.capacity : fallbackRoom.maxGuests,
-          size: r.size || fallbackRoom.size,
-          bedType: r.bedType || fallbackRoom.bedType,
-          viewType: r.viewType || fallbackRoom.viewType,
-          occupancy: r.occupancy || `${r.capacity || fallbackRoom.maxGuests} adults`,
-          tagline: r.tagline || fallbackRoom.tagline,
-          amenities: Array.isArray(r.amenities) && r.amenities.length > 0 ? r.amenities : fallbackRoom.amenities,
-          policies: Array.isArray(r.policies) && r.policies.length > 0 ? r.policies : fallbackRoom.policies,
-          gallery: [roomImage, ...(Array.isArray(r.images) && r.images.length > 0 ? r.images.filter((image: string) => image !== roomImage) : fallbackRoom.gallery.filter((image) => image !== roomImage))],
-          isFeatured: typeof r.isFeatured === "boolean" ? r.isFeatured : Boolean(fallbackRoom.isFeatured),
-        };
-      })
-    : fallbackRooms.slice(0, ROOM_PAGE_LIMIT).map((fallbackRoom, index) => {
-        const roomImage = roomPageImages[index % roomPageImages.length];
-        const roomName = roomPageNames[index % roomPageNames.length];
-        return {
-          ...fallbackRoom,
-          name: roomName,
-          image: roomImage,
-          gallery: [roomImage, ...fallbackRoom.gallery.filter((image) => image !== roomImage)],
-        };
-      });
+  const staticRooms = fallbackRooms.slice(0, roomPageNames.length).map((fallbackRoom, index) => {
+    const roomImage = roomPageImages[index % roomPageImages.length];
+    const roomName = roomPageNames[index % roomPageNames.length];
+    return {
+      ...fallbackRoom,
+      name: roomName,
+      image: roomImage,
+      gallery: [roomImage, ...fallbackRoom.gallery.filter((image) => image !== roomImage)],
+    };
+  });
+
+  const extraRooms = hasUsableRoomData
+    ? roomRecords
+        .filter((room: any) => !staticRoomNameSet.has(String(room?.name || "").toUpperCase()))
+        .map((r: any, index: number) => {
+          const fallbackRoom = fallbackRooms[(index + roomPageNames.length) % fallbackRooms.length];
+          return {
+            id: r.id || fallbackRoom.id,
+            name: r.name || fallbackRoom.name,
+            image: r.images?.[0] || fallbackRoom.image,
+            description: r.description || fallbackRoom.description,
+            features: Array.isArray(r.features) && r.features.length > 0 ? r.features : fallbackRoom.features,
+            price: typeof r.price === "number" ? r.price : fallbackRoom.price,
+            maxGuests: typeof r.capacity === "number" ? r.capacity : fallbackRoom.maxGuests,
+            size: r.size || fallbackRoom.size,
+            bedType: r.bedType || fallbackRoom.bedType,
+            viewType: r.viewType || fallbackRoom.viewType,
+            occupancy: r.occupancy || `${r.capacity || fallbackRoom.maxGuests} adults`,
+            tagline: r.tagline || fallbackRoom.tagline,
+            amenities: Array.isArray(r.amenities) && r.amenities.length > 0 ? r.amenities : fallbackRoom.amenities,
+            policies: Array.isArray(r.policies) && r.policies.length > 0 ? r.policies : fallbackRoom.policies,
+            gallery: Array.isArray(r.images) && r.images.length > 0 ? r.images : fallbackRoom.gallery,
+            isFeatured: typeof r.isFeatured === "boolean" ? r.isFeatured : Boolean(fallbackRoom.isFeatured),
+          };
+        })
+    : [];
+
+  const displayRooms = [...staticRooms, ...extraRooms];
 
   return (
     <div className="overflow-hidden">
@@ -441,7 +445,7 @@ export function Rooms({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <Sparkles className="h-12 w-12 text-[#c9a961] mx-auto mb-4" />
+             
               <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">
                 Exclusive Suite Benefits
               </h2>
