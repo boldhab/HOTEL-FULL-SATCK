@@ -397,16 +397,16 @@ export function Home({
                   <div className="flex flex-wrap items-center gap-2.5">
                     <span className="text-xs sm:text-sm tracking-[0.18em] text-[#c9a961] uppercase">{settings.hotelName}</span>
                     <span className="h-1 w-1 rounded-full bg-white/70" />
-                    <span className="text-xs sm:text-sm text-white/85">Trusted by travelers in Debre Birhan</span>
+                    <span className="text-xs sm:text-sm text-white/85">2-star hotel in Debre Birhan</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
                     <div className="flex items-center gap-1.5">
                       <div className="flex items-center text-[#c9a961]">
-                        {Array.from({ length: 5 }).map((_, index) => (
+                        {Array.from({ length: 2 }).map((_, index) => (
                           <Star key={index} className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-current" />
                         ))}
                       </div>
-                      <span className="font-semibold text-white">4.8</span>
+                      <span className="font-semibold text-white">4.1</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-white/90">
                       <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#c9a961]" />
